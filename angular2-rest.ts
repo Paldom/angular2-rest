@@ -56,7 +56,7 @@ export class RESTClient {
         return null;
     };
 
-    protected getDefaultHeaders(): string {
+    protected getDefaultHeaders(): Object {
         return null;
     };
 
