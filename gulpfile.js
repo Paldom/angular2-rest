@@ -8,6 +8,7 @@ gulp.task('compile', function () {
     .pipe(typescript({
       "target": "es5",
       "noImplicitAny": false,
+      "declaration": true,
       "emitDecoratorMetadata": true,
       "experimentalDecorators": true,
     }))

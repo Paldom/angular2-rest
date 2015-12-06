@@ -8,22 +8,6 @@ Angular2 HTTP client to consume RESTful services. Built on angular2/http with Ty
 npm install angular2-rest
 ```
 
-Load components to your Angular2 project with direct import:
-
-```ts
-import {...} from './node_modules/angular2-rest/angular2-rest';
-```
-
-Or with SystemJS:
-
-```js
-System.config({
-    map: {
-      'angular2-rest': 'node_modules/angular2-rest'
-    }
-});
-```
-
 ## Example
 
 ```ts
