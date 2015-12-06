@@ -12,7 +12,7 @@ npm install angular2-rest
 
 ```ts
 
-import {RESTClient, GET, PUT, POST, DELETE, BaseUrl, Headers, DefaultHeaders, Path, Body, Query, IRequest} from './angular2-rest';
+import {RESTClient, GET, PUT, POST, DELETE, BaseUrl, Headers, DefaultHeaders, Path, Body, Query, IRequest} from 'angular2-rest';
 
 import {Todo} from './models/Todo';
 import {SessionFactory} from './sessionFactory';
