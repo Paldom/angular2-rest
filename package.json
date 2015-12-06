@@ -1,0 +1,33 @@
+{
+  "name": "angular2-rest",
+  "version": "0.0.1",
+  "description": "Angular2 HTTP client to consume RESTful services.",
+  "scripts": {
+    "test": "gulp test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Paldom/angular2-rest.git"
+  },
+  "keywords": [
+    "angular2",
+    "angulario",
+    "http",
+    "rest",
+    "client"
+  ],
+  "author": "Domonkos Pal <Paldom>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Paldom/angular2-rest/issues"
+  },
+  "homepage": "https://github.com/Paldom/angular2-rest#readme",
+  "dependencies": {
+    "angular2": "^2.0.0-alpha.48"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-jasmine": "^2.2.1",
+    "gulp-tsc": "^1.1.4"
+  }
+}
