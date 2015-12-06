@@ -1,6 +1,6 @@
 {
   "name": "angular2-rest",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Angular2 HTTP client to consume RESTful services.",
   "typings": "./angular2-rest.d.ts",
   "scripts": {
