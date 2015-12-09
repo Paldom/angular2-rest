@@ -97,7 +97,7 @@ export function BaseUrl(url: string) {
 }
 
 /**
- * Set default headers for every method of the RESTClient 
+ * Set default headers for every method of the RESTClient
  * @param {Object} headers - deafult headers in a key-value pair
  */
 export function DefaultHeaders(headers: any) {
@@ -150,7 +150,7 @@ export var Header = paramBuilder("Header");
 
 
 /**
- * Set custom headers for a REST method 
+ * Set custom headers for a REST method
  * @param {Object} headersDef - custom headers in a key-value pair
  */
 export function Headers(headersDef: any) {
@@ -175,8 +175,8 @@ function methodBuilder(name: string) {
                 var body = null;
                 if (pBody) {
                     body = JSON.stringify(args[pBody[0].parameterIndex]);
-                } 
-                
+                }
+
                 // Path
                 var resUrl: string = url;
                 if (pPath) {
@@ -184,13 +184,18 @@ function methodBuilder(name: string) {
                         resUrl = resUrl.replace("{" + pPath[k].key + "}", args[pPath[k].parameterIndex]);
                     }
                 }
-                
+
                 // Query
                 var queryString = "";
                 if (pQuery) {
-                    queryString = pQuery.map(p => {
-                        return encodeURIComponent(p.key) + '=' + encodeURIComponent(args[p.parameterIndex]);
-                    }).join('&');
+                   queryString = pQuery
+                   .filter(p => args[p.parameterIndex])
+                   .map(p => {
+                       var key = encodeURIComponent(p.key)
+                       var value = encodeURIComponent(JSON.stringify(args[p.parameterIndex]))
+                       return key + '=' + value;
+                    })
+                    .join('&');
                 }
                 if (queryString) {
                     queryString = "?" + queryString;
