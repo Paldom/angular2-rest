@@ -6,8 +6,6 @@ License: MIT
 
 Table of Contents:
 
-- interface IRequest
-- interface IResponse
 - class RESTClient
 
 - Class Decorators:
@@ -30,16 +28,12 @@ Table of Contents:
 */
 
 import {Injectable, Inject, Injector} from 'angular2/angular2';
-import {Http, Headers as AngularHeaders} from 'angular2/http';
-
-export interface IRequest {
-    url: string;
-    headers: AngularHeaders;
-    body?: Object;
-}
-
-export interface IResponse {
-}
+import {
+Http, Headers as AngularHeaders,
+Request, RequestOptions, RequestMethod as RequestMethods, RequestOptionsArgs,
+Response,
+URLSearchParams
+} from 'angular2/http';
 
 /**
 * Angular 2 RESTClient class.
@@ -64,21 +58,20 @@ export class RESTClient {
     * Request Interceptor
     *
     * @method requestInterceptor
-    * @param {IRequest} req - request object
+    * @param {Request} req - request object
     */
-    protected requestInterceptor(req: IRequest) {
+    protected requestInterceptor(req: Request) {
     }
 
     /**
     * Response Interceptor
-    * NOT IMPLEMENTED YET!
     *
     * @method responseInterceptor
-    * @param {IResponse} resp - response object
+    * @param {Response} res - response object
+    * @returns {Response} res - transformed response object
     */
-    protected responseInterceptor(resp: IResponse) {
-        // TODO
-        throw new Error("Not implemented yet!");
+    protected responseInterceptor(res: Response): Response {
+        return res
     }
 
 }
@@ -160,7 +153,7 @@ export function Headers(headersDef: any) {
     }
 }
 
-function methodBuilder(name: string) {
+function methodBuilder(method: number) {
     return function(url: string) {
         return function(target: RESTClient, propertyKey: string, descriptor: any) {
 
@@ -171,44 +164,37 @@ function methodBuilder(name: string) {
 
             descriptor.value = function(...args: any[]) {
 
-                //Body
+                // Body
                 var body = null;
                 if (pBody) {
                     body = JSON.stringify(args[pBody[0].parameterIndex]);
                 }
 
                 // Path
-                var resUrl: string = url;
                 if (pPath) {
                     for (k in pPath) {
-                        resUrl = resUrl.replace("{" + pPath[k].key + "}", args[pPath[k].parameterIndex]);
+                        url = url.replace("{" + pPath[k].key + "}", args[pPath[k].parameterIndex]);
                     }
                 }
 
                 // Query
-                var queryString = "";
+                var search = new URLSearchParams()
                 if (pQuery) {
-                   queryString = pQuery
-                   .filter(p => args[p.parameterIndex])
-                   .map(p => {
-                       var key = encodeURIComponent(p.key)
-                       var value = encodeURIComponent(JSON.stringify(args[p.parameterIndex]))
-                       return key + '=' + value;
-                    })
-                    .join('&');
+                    pQuery
+                        .filter(p => args[p.parameterIndex]) // filter out optional parameters
+                        .forEach(p => {
+                            var key = p.key;
+                            var value = args[p.parameterIndex];
+                            // if the value is a instance of Object, we stringify it
+                            if (value instanceof Object) {
+                                value = JSON.stringify(value);
+                            }
+                            search.set(encodeURIComponent(key), encodeURIComponent(value));
+                        })
                 }
-                if (queryString) {
-                    queryString = "?" + queryString;
-                }
-                resUrl = resUrl + queryString;
-
 
                 // Headers
-                var headers = new AngularHeaders();
-                var defaultHeadersDef = this.getDefaultHeaders();
-                for (var k in defaultHeadersDef) {
-                    headers.append(k, defaultHeadersDef[k]);
-                }
+                var headers = new AngularHeaders(this.getDefaultHeaders());
                 for (var k in descriptor.headers) {
                     headers.append(k, descriptor.headers[k]);
                 }
@@ -218,30 +204,25 @@ function methodBuilder(name: string) {
                     }
                 }
 
-                var self = this;
-
-                return new Promise<any>((resolve, reject) => {
-                    var req: IRequest = {
-                        url: self.getBaseUrl() + resUrl,
-                        headers: headers,
-                        body: body
-                    };
-                    self.requestInterceptor(req);
-                    if (name === "post" || name === "put") {
-                        self.http[name](req.url, req.body, {
-                            'headers': req.headers
-                        }).subscribe(res => {
-                            resolve(res.json());
-                        });
-                    } else {
-                        self.http[name](req.url, {
-                            'headers': req.headers
-                        }).subscribe(res => {
-                            resolve(res.json());
-                        });
-                    }
+                // Request options
+                var options = new RequestOptions({
+                    method,
+                    url: this.getBaseUrl() + url,
+                    headers,
+                    body,
+                    search
                 });
 
+                var req = new Request(options);
+
+                // intercept the request
+                this.requestInterceptor(req);
+                // make the request and store the observable for later transformation
+                var observable = this.http.request(req);
+                // intercept the response
+                observable = observable.map(this.responseInterceptor);
+
+                return observable;
             };
 
             return descriptor;
@@ -253,19 +234,19 @@ function methodBuilder(name: string) {
  * GET method
  * @param {string} url - resource url of the method
  */
-export var GET = methodBuilder("get");
+export var GET = methodBuilder(RequestMethods.Get);
 /**
  * POST method
  * @param {string} url - resource url of the method
  */
-export var POST = methodBuilder("post");
+export var POST = methodBuilder(RequestMethods.Post);
 /**
  * PUT method
  * @param {string} url - resource url of the method
  */
-export var PUT = methodBuilder("put");
+export var PUT = methodBuilder(RequestMethods.Put);
 /**
  * DELETE method
  * @param {string} url - resource url of the method
  */
-export var DELETE = methodBuilder("delete");
+export var DELETE = methodBuilder(RequestMethods.Delete);
