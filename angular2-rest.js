@@ -6,8 +6,6 @@ License: MIT
 
 Table of Contents:
 
-- interface IRequest
-- interface IResponse
 - class RESTClient
 
 - Class Decorators:
@@ -64,20 +62,19 @@ var RESTClient = (function () {
     * Request Interceptor
     *
     * @method requestInterceptor
-    * @param {IRequest} req - request object
+    * @param {Request} req - request object
     */
     RESTClient.prototype.requestInterceptor = function (req) {
     };
     /**
     * Response Interceptor
-    * NOT IMPLEMENTED YET!
     *
     * @method responseInterceptor
-    * @param {IResponse} resp - response object
+    * @param {Response} res - response object
+    * @returns {Response} res - transformed response object
     */
-    RESTClient.prototype.responseInterceptor = function (resp) {
-        // TODO
-        throw new Error("Not implemented yet!");
+    RESTClient.prototype.responseInterceptor = function (res) {
+        return res;
     };
     RESTClient = __decorate([
         __param(0, angular2_1.Inject(http_1.Http)), 
@@ -160,7 +157,7 @@ function Headers(headersDef) {
     };
 }
 exports.Headers = Headers;
-function methodBuilder(name) {
+function methodBuilder(method) {
     return function (url) {
         return function (target, propertyKey, descriptor) {
             var pPath = target[(propertyKey + "_Path_parameters")];
@@ -172,40 +169,34 @@ function methodBuilder(name) {
                 for (var _i = 0; _i < arguments.length; _i++) {
                     args[_i - 0] = arguments[_i];
                 }
-                //Body
+                // Body
                 var body = null;
                 if (pBody) {
                     body = JSON.stringify(args[pBody[0].parameterIndex]);
                 }
                 // Path
-                var resUrl = url;
                 if (pPath) {
                     for (k in pPath) {
-                        resUrl = resUrl.replace("{" + pPath[k].key + "}", args[pPath[k].parameterIndex]);
+                        url = url.replace("{" + pPath[k].key + "}", args[pPath[k].parameterIndex]);
                     }
                 }
                 // Query
-                var queryString = "";
+                var search = new http_1.URLSearchParams();
                 if (pQuery) {
-                    queryString = pQuery
-                        .filter(function (p) { return args[p.parameterIndex]; })
-                        .map(function (p) {
-                        var key = encodeURIComponent(p.key);
-                        var value = encodeURIComponent(JSON.stringify(args[p.parameterIndex]));
-                        return key + '=' + value;
-                    })
-                        .join('&');
+                    pQuery
+                        .filter(function (p) { return args[p.parameterIndex]; }) // filter out optional parameters
+                        .forEach(function (p) {
+                        var key = p.key;
+                        var value = args[p.parameterIndex];
+                        // if the value is a instance of Object, we stringify it
+                        if (value instanceof Object) {
+                            value = JSON.stringify(value);
+                        }
+                        search.set(encodeURIComponent(key), encodeURIComponent(value));
+                    });
                 }
-                if (queryString) {
-                    queryString = "?" + queryString;
-                }
-                resUrl = resUrl + queryString;
                 // Headers
-                var headers = new http_1.Headers();
-                var defaultHeadersDef = this.getDefaultHeaders();
-                for (var k in defaultHeadersDef) {
-                    headers.append(k, defaultHeadersDef[k]);
-                }
+                var headers = new http_1.Headers(this.getDefaultHeaders());
                 for (var k in descriptor.headers) {
                     headers.append(k, descriptor.headers[k]);
                 }
@@ -214,29 +205,22 @@ function methodBuilder(name) {
                         headers.append(pHeader[k].key, args[pHeader[k].parameterIndex]);
                     }
                 }
-                var self = this;
-                return new Promise(function (resolve, reject) {
-                    var req = {
-                        url: self.getBaseUrl() + resUrl,
-                        headers: headers,
-                        body: body
-                    };
-                    self.requestInterceptor(req);
-                    if (name === "post" || name === "put") {
-                        self.http[name](req.url, req.body, {
-                            'headers': req.headers
-                        }).subscribe(function (res) {
-                            resolve(res.json());
-                        });
-                    }
-                    else {
-                        self.http[name](req.url, {
-                            'headers': req.headers
-                        }).subscribe(function (res) {
-                            resolve(res.json());
-                        });
-                    }
+                // Request options
+                var options = new http_1.RequestOptions({
+                    method: method,
+                    url: this.getBaseUrl() + url,
+                    headers: headers,
+                    body: body,
+                    search: search
                 });
+                var req = new http_1.Request(options);
+                // intercept the request
+                this.requestInterceptor(req);
+                // make the request and store the observable for later transformation
+                var observable = this.http.request(req);
+                // intercept the response
+                observable = observable.map(this.responseInterceptor);
+                return observable;
             };
             return descriptor;
         };
@@ -246,19 +230,19 @@ function methodBuilder(name) {
  * GET method
  * @param {string} url - resource url of the method
  */
-exports.GET = methodBuilder("get");
+exports.GET = methodBuilder(http_1.RequestMethod.Get);
 /**
  * POST method
  * @param {string} url - resource url of the method
  */
-exports.POST = methodBuilder("post");
+exports.POST = methodBuilder(http_1.RequestMethod.Post);
 /**
  * PUT method
  * @param {string} url - resource url of the method
  */
-exports.PUT = methodBuilder("put");
+exports.PUT = methodBuilder(http_1.RequestMethod.Put);
 /**
  * DELETE method
  * @param {string} url - resource url of the method
  */
-exports.DELETE = methodBuilder("delete");
+exports.DELETE = methodBuilder(http_1.RequestMethod.Delete);
