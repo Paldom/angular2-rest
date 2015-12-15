@@ -1,5 +1,6 @@
-///<reference path="node_modules/angular2/angular2.d.ts"/>
-///<reference path="node_modules/rxjs/Rx.d.ts"/>
+/// <reference path="node_modules/angular2/core.d.ts" />
+/// <reference path="node_modules/angular2/http.d.ts" />
+/// <reference path="node_modules/rxjs/Rx.d.ts" />
 
 /*
 
@@ -30,7 +31,7 @@ Table of Contents:
 
 */
 
-import {Injectable, Inject, Injector} from 'angular2/angular2';
+import {Injectable, Inject, Injector} from 'angular2/core';
 import {
 Http, Headers as AngularHeaders,
 Request, RequestOptions, RequestMethod as RequestMethods, RequestOptionsArgs,

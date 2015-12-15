@@ -1,5 +1,6 @@
-///<reference path="node_modules/angular2/angular2.d.ts"/>
-///<reference path="node_modules/rxjs/Rx.d.ts"/>
+/// <reference path="node_modules/angular2/core.d.ts" />
+/// <reference path="node_modules/angular2/http.d.ts" />
+/// <reference path="node_modules/rxjs/Rx.d.ts" />
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") return Reflect.decorate(decorators, target, key, desc);
     switch (arguments.length) {
@@ -42,7 +43,7 @@ Table of Contents:
     @Body
 
 */
-var angular2_1 = require('angular2/angular2');
+var core_1 = require('angular2/core');
 var http_1 = require('angular2/http');
 /**
 * Angular 2 RESTClient class.
@@ -81,7 +82,7 @@ var RESTClient = (function () {
         return res;
     };
     RESTClient = __decorate([
-        __param(0, angular2_1.Inject(http_1.Http)), 
+        __param(0, core_1.Inject(http_1.Http)), 
         __metadata('design:paramtypes', [http_1.Http])
     ], RESTClient);
     return RESTClient;

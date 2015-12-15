@@ -12,7 +12,8 @@ npm install angular2-rest
 
 ```ts
 
-import {RESTClient, GET, PUT, POST, DELETE, BaseUrl, Headers, DefaultHeaders, Path, Body, Query, IRequest} from 'angular2-rest';
+import {Request, Response} from 'angular2/http';
+import {RESTClient, GET, PUT, POST, DELETE, BaseUrl, Headers, DefaultHeaders, Path, Body, Query} from 'angular2-rest';
 
 import {Todo} from './models/Todo';
 import {SessionFactory} from './sessionFactory';
@@ -25,26 +26,30 @@ import {SessionFactory} from './sessionFactory';
 })
 export class TodoRESTClient extends RESTClient {
 
-    protected requestInterceptor(req: IRequest) {
+    protected requestInterceptor(req: Request) {
         if (SessionFactory.getInstance().isAuthenticated) {
             req.headers.append('jwt', SessionFactory.getInstance().credentials.jwt);
         }
     }
+    
+    protected requestInterceptor(req: Response) {
+        // do sg with responses
+    }
 
     @GET("todo/")
-    public getTodos( @Query("sort") sort?: string): Promise<Array<Todo>> { return null; };
+    public getTodos( @Query("sort") sort?: string): Observable { return null; };
 
     @GET("todo/{id}")
-    public getTodoById( @Path("id") id: string): Promise<Todo> { return null; };
+    public getTodoById( @Path("id") id: string): Observable { return null; };
 
     @POST("todo")
-    public postTodo( @Body todo: Todo): Promise<Todo> { return null; };
+    public postTodo( @Body todo: Todo): Observable { return null; };
 
     @PUT("todo/{id}")
-    public putTodoById( @Path("id") id: string, @Body todo: Todo): Promise<Todo> { return null; };
+    public putTodoById( @Path("id") id: string, @Body todo: Todo): Observable { return null; };
 
     @DELETE("todo/{id}")
-    public deleteTodoById( @Path("id") id: string): Promise<any> { return null; };
+    public deleteTodoById( @Path("id") id: string): Observable { return null; };
 
 }
 
@@ -73,15 +78,6 @@ export class TodoRESTClient extends RESTClient {
 - `@Query(key: string)`
 - `@Header(key: string)`
 - `@Body`
-
-### IRequest
-#### Properties:
-- `url: string;`: resource url
-- `headers: Headers;`: angular/http Headers
-- `body?: Object;`: optional, body Object
-
-### IResponse
-TODO
 
 # License
 
