@@ -1,11 +1,4 @@
-import { Http, Headers as AngularHeaders } from 'angular2/http';
-export interface IRequest {
-    url: string;
-    headers: AngularHeaders;
-    body?: Object;
-}
-export interface IResponse {
-}
+import { Http, Request, Response } from 'angular2/http';
 /**
 * Angular 2 RESTClient class.
 *
@@ -21,17 +14,17 @@ export declare class RESTClient {
     * Request Interceptor
     *
     * @method requestInterceptor
-    * @param {IRequest} req - request object
+    * @param {Request} req - request object
     */
-    protected requestInterceptor(req: IRequest): void;
+    protected requestInterceptor(req: Request): void;
     /**
     * Response Interceptor
-    * NOT IMPLEMENTED YET!
     *
     * @method responseInterceptor
-    * @param {IResponse} resp - response object
+    * @param {Response} res - response object
+    * @returns {Response} res - transformed response object
     */
-    protected responseInterceptor(resp: IResponse): void;
+    protected responseInterceptor(res: Response): Response;
 }
 /**
  * Set the base URL of REST resource

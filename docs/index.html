@@ -70,19 +70,9 @@
 				<h2 id="installation">Installation</h2>
 				<pre><code class="lang-sh">npm install angular2-rest
 </code></pre>
-				<p>Load components to your Angular2 project with direct import:</p>
-				<pre><code class="lang-ts"><span class="hljs-keyword">import</span> {...} from <span class="hljs-string">'./node_modules/angular2-rest/angular2-rest'</span>;
-</code></pre>
-				<p>Or with SystemJS:</p>
-				<pre><code class="lang-js">System.config({
-    map: {
-      <span class="hljs-string">'angular2-rest'</span>: <span class="hljs-string">'node_modules/angular2-rest'</span>
-    }
-});
-</code></pre>
 				<h2 id="example">Example</h2>
 				<pre><code class="lang-ts">
-<span class="hljs-keyword">import</span> {RESTClient, GET, PUT, POST, DELETE, BaseUrl, Headers, DefaultHeaders, Path, Body, Query, IRequest} from <span class="hljs-string">'./angular2-rest'</span>;
+<span class="hljs-keyword">import</span> {RESTClient, GET, PUT, POST, DELETE, BaseUrl, Headers, DefaultHeaders, Path, Body, Query, IRequest} from <span class="hljs-string">'angular2-rest'</span>;
 
 <span class="hljs-keyword">import</span> {Todo} from <span class="hljs-string">'./models/Todo'</span>;
 <span class="hljs-keyword">import</span> {SessionFactory} from <span class="hljs-string">'./sessionFactory'</span>;

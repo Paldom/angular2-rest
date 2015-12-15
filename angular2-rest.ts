@@ -34,6 +34,7 @@ Request, RequestOptions, RequestMethod as RequestMethods, RequestOptionsArgs,
 Response,
 URLSearchParams
 } from 'angular2/http';
+import {Observable} from 'rxjs/Observable';
 
 /**
 * Angular 2 RESTClient class.
@@ -218,7 +219,7 @@ function methodBuilder(method: number) {
                 // intercept the request
                 this.requestInterceptor(req);
                 // make the request and store the observable for later transformation
-                var observable = this.http.request(req);
+                var observable : Observable<Response> = this.http.request(req);
                 // intercept the response
                 observable = observable.map(this.responseInterceptor);
 

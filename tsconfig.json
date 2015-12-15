@@ -5,8 +5,8 @@
         "noImplicitAny": false,
         "outDir": ".",
         "rootDir": ".",
-        "declaration": false,
-        "removeComments": true,
+        "declaration": true,
+        "removeComments": false,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "sourceMap": true
