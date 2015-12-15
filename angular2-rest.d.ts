@@ -1,3 +1,5 @@
+/// <reference path="node_modules/angular2/angular2.d.ts" />
+/// <reference path="node_modules/rxjs/Rx.d.ts" />
 import { Http, Request, Response } from 'angular2/http';
 /**
 * Angular 2 RESTClient class.
