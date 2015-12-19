@@ -31,14 +31,14 @@ Table of Contents:
 
 */
 
-import {Injectable, Inject, Injector} from 'angular2/core';
+import {Inject} from "angular2/core";
 import {
 Http, Headers as AngularHeaders,
-Request, RequestOptions, RequestMethod as RequestMethods, RequestOptionsArgs,
+Request, RequestOptions, RequestMethod as RequestMethods,
 Response,
 URLSearchParams
-} from 'angular2/http';
-import {Observable} from 'rxjs/Observable';
+} from "angular2/http";
+import {Observable} from "rxjs/Observable";
 
 /**
 * Angular 2 RESTClient class.
@@ -66,6 +66,7 @@ export class RESTClient {
     * @param {Request} req - request object
     */
     protected requestInterceptor(req: Request) {
+      //
     }
 
     /**
@@ -76,7 +77,7 @@ export class RESTClient {
     * @returns {Response} res - transformed response object
     */
     protected responseInterceptor(res: Response): Response {
-        return res
+        return res;
     }
 
 }
@@ -89,9 +90,9 @@ export function BaseUrl(url: string) {
     return function <TFunction extends Function>(Target: TFunction): TFunction {
         Target.prototype.getBaseUrl = function() {
             return url;
-        }
+        };
         return Target;
-    }
+    };
 }
 
 /**
@@ -102,9 +103,9 @@ export function DefaultHeaders(headers: any) {
     return function <TFunction extends Function>(Target: TFunction): TFunction {
         Target.prototype.getDefaultHeaders = function() {
             return headers;
-        }
+        };
         return Target;
-    }
+    };
 }
 
 function paramBuilder(paramName: string) {
@@ -112,13 +113,12 @@ function paramBuilder(paramName: string) {
         return function(target: RESTClient, propertyKey: string | symbol, parameterIndex: number) {
             var metadataKey = `${propertyKey}_${paramName}_parameters`;
             var paramObj: any = {
-                parameterIndex: parameterIndex,
-                key: key
-            }
+                key: key,
+                parameterIndex: parameterIndex
+            };
             if (Array.isArray(target[metadataKey])) {
                 target[metadataKey].push(paramObj);
-            }
-            else {
+            } else {
                 target[metadataKey] = [paramObj];
             }
         };
@@ -155,7 +155,7 @@ export function Headers(headersDef: any) {
     return function(target: RESTClient, propertyKey: string, descriptor: any) {
         descriptor.headers = headersDef;
         return descriptor;
-    }
+    };
 }
 
 function methodBuilder(method: number) {
@@ -186,19 +186,19 @@ function methodBuilder(method: number) {
                 }
 
                 // Query
-                var search = new URLSearchParams()
+                var search = new URLSearchParams();
                 if (pQuery) {
                     pQuery
-                        .filter(p => args[p.parameterIndex]) // filter out optional parameters
-                        .forEach(p => {
-                            var key = p.key;
-                            var value = args[p.parameterIndex];
-                            // if the value is a instance of Object, we stringify it
-                            if (value instanceof Object) {
-                                value = JSON.stringify(value);
-                            }
-                            search.set(encodeURIComponent(key), encodeURIComponent(value));
-                        })
+                    .filter(p => args[p.parameterIndex]) // filter out optional parameters
+                    .forEach(p => {
+                        var key = p.key;
+                        var value = args[p.parameterIndex];
+                        // if the value is a instance of Object, we stringify it
+                        if (value instanceof Object) {
+                            value = JSON.stringify(value);
+                        }
+                        search.set(encodeURIComponent(key), encodeURIComponent(value));
+                    });
                 }
 
                 // Headers
