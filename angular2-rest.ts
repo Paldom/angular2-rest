@@ -176,9 +176,12 @@ function methodBuilder(method: number) {
                 }
 
                 // Path
+                var resUrl: string = url;
                 if (pPath) {
-                    for (k in pPath) {
-                        url = url.replace("{" + pPath[k].key + "}", args[pPath[k].parameterIndex]);
+                    for (var k in pPath) {
+                        if (pPath.hasOwnProperty(k)) {
+                            resUrl = resUrl.replace("{" + pPath[k].key + "}", args[pPath[k].parameterIndex]);
+                        }
                     }
                 }
 
@@ -201,18 +204,22 @@ function methodBuilder(method: number) {
                 // Headers
                 var headers = new AngularHeaders(this.getDefaultHeaders());
                 for (var k in descriptor.headers) {
-                    headers.append(k, descriptor.headers[k]);
+                    if (descriptor.headers.hasOwnProperty(k)) {
+                        headers.append(k, descriptor.headers[k]);
+                    }
                 }
                 if (pHeader) {
                     for (var k in pHeader) {
-                        headers.append(pHeader[k].key, args[pHeader[k].parameterIndex]);
+                        if (pHeader.hasOwnProperty(k)) {
+                            headers.append(pHeader[k].key, args[pHeader[k].parameterIndex]);
+                        }
                     }
                 }
 
                 // Request options
                 var options = new RequestOptions({
                     method,
-                    url: this.getBaseUrl() + url,
+                    url: this.getBaseUrl() + resUrl,
                     headers,
                     body,
                     search
@@ -223,7 +230,7 @@ function methodBuilder(method: number) {
                 // intercept the request
                 this.requestInterceptor(req);
                 // make the request and store the observable for later transformation
-                var observable : Observable<Response> = this.http.request(req);
+                var observable: Observable<Response> = this.http.request(req);
                 // intercept the response
                 observable = observable.map(this.responseInterceptor);
 
@@ -232,7 +239,7 @@ function methodBuilder(method: number) {
 
             return descriptor;
         };
-    }
+    };
 }
 
 /**
