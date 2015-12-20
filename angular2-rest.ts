@@ -202,12 +202,15 @@ function methodBuilder(method: number) {
                 }
 
                 // Headers
+                // set class default headers
                 var headers = new AngularHeaders(this.getDefaultHeaders());
+                // set method specific headers
                 for (var k in descriptor.headers) {
                     if (descriptor.headers.hasOwnProperty(k)) {
                         headers.append(k, descriptor.headers[k]);
                     }
                 }
+                // set parameter specific headers
                 if (pHeader) {
                     for (var k in pHeader) {
                         if (pHeader.hasOwnProperty(k)) {
@@ -262,3 +265,9 @@ export var PUT = methodBuilder(RequestMethods.Put);
  * @param {string} url - resource url of the method
  */
 export var DELETE = methodBuilder(RequestMethods.Delete);
+/**
+ * HEAD method
+ * @param {string} url - resource url of the method
+ */
+export var HEAD = methodBuilder(RequestMethods.Head);
+
