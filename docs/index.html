@@ -72,7 +72,8 @@
 </code></pre>
 				<h2 id="example">Example</h2>
 				<pre><code class="lang-ts">
-<span class="hljs-keyword">import</span> {RESTClient, GET, PUT, POST, DELETE, BaseUrl, Headers, DefaultHeaders, Path, Body, Query, IRequest} from <span class="hljs-string">'angular2-rest'</span>;
+<span class="hljs-keyword">import</span> {Request, Response} from <span class="hljs-string">'angular2/http'</span>;
+<span class="hljs-keyword">import</span> {RESTClient, GET, PUT, POST, DELETE, BaseUrl, Headers, DefaultHeaders, Path, Body, Query} from <span class="hljs-string">'angular2-rest'</span>;
 
 <span class="hljs-keyword">import</span> {Todo} from <span class="hljs-string">'./models/Todo'</span>;
 <span class="hljs-keyword">import</span> {SessionFactory} from <span class="hljs-string">'./sessionFactory'</span>;
@@ -85,26 +86,30 @@
 })
 <span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> TodoRESTClient extends RESTClient {
 
-    <span class="hljs-keyword">protected</span> requestInterceptor(req: IRequest) {
+    <span class="hljs-keyword">protected</span> requestInterceptor(req: Request) {
         <span class="hljs-keyword">if</span> (SessionFactory.getInstance().isAuthenticated) {
             req.headers.append(<span class="hljs-string">'jwt'</span>, SessionFactory.getInstance().credentials.jwt);
         }
     }
 
+    <span class="hljs-keyword">protected</span> requestInterceptor(req: Response) {
+        <span class="hljs-comment">// do sg with responses</span>
+    }
+
     @GET(<span class="hljs-string">"todo/"</span>)
-    <span class="hljs-keyword">public</span> getTodos( @Query(<span class="hljs-string">"sort"</span>) sort?: <span class="hljs-built_in">string</span>): Promise&lt;<span class="hljs-built_in">Array</span>&lt;Todo&gt;&gt; { <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; };
+    <span class="hljs-keyword">public</span> getTodos( @Query(<span class="hljs-string">"sort"</span>) sort?: <span class="hljs-built_in">string</span>): Observable { <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; };
 
     @GET(<span class="hljs-string">"todo/{id}"</span>)
-    <span class="hljs-keyword">public</span> getTodoById( @Path(<span class="hljs-string">"id"</span>) id: <span class="hljs-built_in">string</span>): Promise&lt;Todo&gt; { <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; };
+    <span class="hljs-keyword">public</span> getTodoById( @Path(<span class="hljs-string">"id"</span>) id: <span class="hljs-built_in">string</span>): Observable { <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; };
 
     @POST(<span class="hljs-string">"todo"</span>)
-    <span class="hljs-keyword">public</span> postTodo( @Body todo: Todo): Promise&lt;Todo&gt; { <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; };
+    <span class="hljs-keyword">public</span> postTodo( @Body todo: Todo): Observable { <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; };
 
     @PUT(<span class="hljs-string">"todo/{id}"</span>)
-    <span class="hljs-keyword">public</span> putTodoById( @Path(<span class="hljs-string">"id"</span>) id: <span class="hljs-built_in">string</span>, @Body todo: Todo): Promise&lt;Todo&gt; { <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; };
+    <span class="hljs-keyword">public</span> putTodoById( @Path(<span class="hljs-string">"id"</span>) id: <span class="hljs-built_in">string</span>, @Body todo: Todo): Observable { <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; };
 
     @DELETE(<span class="hljs-string">"todo/{id}"</span>)
-    <span class="hljs-keyword">public</span> deleteTodoById( @Path(<span class="hljs-string">"id"</span>) id: <span class="hljs-built_in">string</span>): Promise&lt;<span class="hljs-built_in">any</span>&gt; { <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; };
+    <span class="hljs-keyword">public</span> deleteTodoById( @Path(<span class="hljs-string">"id"</span>) id: <span class="hljs-built_in">string</span>): Observable { <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; };
 
 }
 </code></pre>
@@ -135,15 +140,6 @@
 					<li><code>@Header(key: string)</code></li>
 					<li><code>@Body</code></li>
 				</ul>
-				<h3 id="irequest">IRequest</h3>
-				<h4 id="properties-">Properties:</h4>
-				<ul>
-					<li><code>url: string;</code>: resource url</li>
-					<li><code>headers: Headers;</code>: angular/http Headers</li>
-					<li><code>body?: Object;</code>: optional, body Object</li>
-				</ul>
-				<h3 id="iresponse">IResponse</h3>
-				<p>TODO</p>
 				<h1 id="license">License</h1>
 				<p>MIT</p>
 			</div>

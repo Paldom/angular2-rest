@@ -2,12 +2,10 @@
 /// <reference path="node_modules/angular2/http.d.ts" />
 /// <reference path="node_modules/rxjs/Rx.d.ts" />
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") return Reflect.decorate(decorators, target, key, desc);
-    switch (arguments.length) {
-        case 2: return decorators.reduceRight(function(o, d) { return (d && d(o)) || o; }, target);
-        case 3: return decorators.reduceRight(function(o, d) { return (d && d(target, key)), void 0; }, void 0);
-        case 4: return decorators.reduceRight(function(o, d) { return (d && d(target, key, o)) || o; }, desc);
-    }
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
@@ -43,8 +41,8 @@ Table of Contents:
     @Body
 
 */
-var core_1 = require('angular2/core');
-var http_1 = require('angular2/http');
+var core_1 = require("angular2/core");
+var http_1 = require("angular2/http");
 /**
 * Angular 2 RESTClient class.
 *
@@ -70,6 +68,7 @@ var RESTClient = (function () {
     * @param {Request} req - request object
     */
     RESTClient.prototype.requestInterceptor = function (req) {
+        //
     };
     /**
     * Response Interceptor
@@ -119,8 +118,8 @@ function paramBuilder(paramName) {
         return function (target, propertyKey, parameterIndex) {
             var metadataKey = propertyKey + "_" + paramName + "_parameters";
             var paramObj = {
-                parameterIndex: parameterIndex,
-                key: key
+                key: key,
+                parameterIndex: parameterIndex
             };
             if (Array.isArray(target[metadataKey])) {
                 target[metadataKey].push(paramObj);
@@ -180,9 +179,12 @@ function methodBuilder(method) {
                     body = JSON.stringify(args[pBody[0].parameterIndex]);
                 }
                 // Path
+                var resUrl = url;
                 if (pPath) {
-                    for (k in pPath) {
-                        url = url.replace("{" + pPath[k].key + "}", args[pPath[k].parameterIndex]);
+                    for (var k in pPath) {
+                        if (pPath.hasOwnProperty(k)) {
+                            resUrl = resUrl.replace("{" + pPath[k].key + "}", args[pPath[k].parameterIndex]);
+                        }
                     }
                 }
                 // Query
@@ -201,19 +203,26 @@ function methodBuilder(method) {
                     });
                 }
                 // Headers
+                // set class default headers
                 var headers = new http_1.Headers(this.getDefaultHeaders());
+                // set method specific headers
                 for (var k in descriptor.headers) {
-                    headers.append(k, descriptor.headers[k]);
+                    if (descriptor.headers.hasOwnProperty(k)) {
+                        headers.append(k, descriptor.headers[k]);
+                    }
                 }
+                // set parameter specific headers
                 if (pHeader) {
                     for (var k in pHeader) {
-                        headers.append(pHeader[k].key, args[pHeader[k].parameterIndex]);
+                        if (pHeader.hasOwnProperty(k)) {
+                            headers.append(pHeader[k].key, args[pHeader[k].parameterIndex]);
+                        }
                     }
                 }
                 // Request options
                 var options = new http_1.RequestOptions({
                     method: method,
-                    url: this.getBaseUrl() + url,
+                    url: this.getBaseUrl() + resUrl,
                     headers: headers,
                     body: body,
                     search: search
@@ -251,4 +260,9 @@ exports.PUT = methodBuilder(http_1.RequestMethod.Put);
  * @param {string} url - resource url of the method
  */
 exports.DELETE = methodBuilder(http_1.RequestMethod.Delete);
+/**
+ * HEAD method
+ * @param {string} url - resource url of the method
+ */
+exports.HEAD = methodBuilder(http_1.RequestMethod.Head);
 //# sourceMappingURL=angular2-rest.js.map

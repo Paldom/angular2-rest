@@ -1,7 +1,7 @@
 /// <reference path="node_modules/angular2/core.d.ts" />
 /// <reference path="node_modules/angular2/http.d.ts" />
 /// <reference path="node_modules/rxjs/Rx.d.ts" />
-import { Http, Request, Response } from 'angular2/http';
+import { Http, Request, Response } from "angular2/http";
 /**
 * Angular 2 RESTClient class.
 *
@@ -84,3 +84,8 @@ export declare var PUT: (url: string) => (target: RESTClient, propertyKey: strin
  * @param {string} url - resource url of the method
  */
 export declare var DELETE: (url: string) => (target: RESTClient, propertyKey: string, descriptor: any) => any;
+/**
+ * HEAD method
+ * @param {string} url - resource url of the method
+ */
+export declare var HEAD: (url: string) => (target: RESTClient, propertyKey: string, descriptor: any) => any;

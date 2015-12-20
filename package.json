@@ -5,7 +5,8 @@
   "typings": "./angular2-rest.d.ts",
   "main": "angular2-rest.js",
   "scripts": {
-    "test": "gulp test"
+    "test": "node_modules/.bin/gulp test",
+    "gulp": "node_modules/.bin/gulp"
   },
   "repository": {
     "type": "git",
