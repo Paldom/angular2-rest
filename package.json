@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Angular2 HTTP client to consume RESTful services.",
   "typings": "./angular2-rest.d.ts",
+  "main": "angular2-rest.js",
   "scripts": {
     "test": "gulp test"
   },
