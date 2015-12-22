@@ -22,13 +22,13 @@ Table of Contents:
     @PUT(url: String)
     @DELETE(url: String)
     @Headers(object)
+    @Produces(MediaType)
 
 - Parameter Decorators:
     @Path(string)
     @Query(string)
     @Header(string)
     @Body
-
 */
 
 import {Inject} from "angular2/core";
@@ -175,7 +175,7 @@ export function Produces(producesDef: MediaType) {
  * Supported @Produces media types
  */
 export enum MediaType {
-  JSON
+    JSON
 }
 
 

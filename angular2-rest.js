@@ -33,13 +33,13 @@ Table of Contents:
     @PUT(url: String)
     @DELETE(url: String)
     @Headers(object)
+    @Produces(MediaType)
 
 - Parameter Decorators:
     @Path(string)
     @Query(string)
     @Header(string)
     @Body
-
 */
 var core_1 = require("angular2/core");
 var http_1 = require("angular2/http");
@@ -161,6 +161,24 @@ function Headers(headersDef) {
     };
 }
 exports.Headers = Headers;
+/**
+ * Defines the media type(s) that the methods can produce
+ * @param MediaType producesDef - mediaType to be parsed
+ */
+function Produces(producesDef) {
+    return function (target, propertyKey, descriptor) {
+        descriptor.isJSON = producesDef === MediaType.JSON;
+        return descriptor;
+    };
+}
+exports.Produces = Produces;
+/**
+ * Supported @Produces media types
+ */
+(function (MediaType) {
+    MediaType[MediaType["JSON"] = 0] = "JSON";
+})(exports.MediaType || (exports.MediaType = {}));
+var MediaType = exports.MediaType;
 function methodBuilder(method) {
     return function (url) {
         return function (target, propertyKey, descriptor) {
@@ -232,8 +250,12 @@ function methodBuilder(method) {
                 this.requestInterceptor(req);
                 // make the request and store the observable for later transformation
                 var observable = this.http.request(req);
+                // transform the obserable in accordance to the @Produces decorator
+                if (descriptor.isJSON) {
+                    observable = observable.map(function (res) { return res.json(); });
+                }
                 // intercept the response
-                observable = observable.map(this.responseInterceptor);
+                observable = this.responseInterceptor(observable);
                 return observable;
             };
             return descriptor;
