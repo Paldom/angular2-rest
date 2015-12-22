@@ -76,7 +76,7 @@ export class RESTClient {
     * @param {Response} res - response object
     * @returns {Response} res - transformed response object
     */
-    protected responseInterceptor(res: Response): Response {
+    protected responseInterceptor(res: Observable<any>): Observable<any> {
         return res;
     }
 
@@ -158,6 +158,27 @@ export function Headers(headersDef: any) {
     };
 }
 
+
+/**
+ * Defines the media type(s) that the methods can produce
+ * @param MediaType producesDef - mediaType to be parsed
+ */
+export function Produces(producesDef: MediaType) {
+    return function(target: RESTClient, propertyKey: string, descriptor: any) {
+        descriptor.isJSON = producesDef === MediaType.JSON;
+        return descriptor;
+    };
+}
+
+
+/**
+ * Supported @Produces media types
+ */
+export enum MediaType {
+  JSON
+}
+
+
 function methodBuilder(method: number) {
     return function(url: string) {
         return function(target: RESTClient, propertyKey: string, descriptor: any) {
@@ -234,8 +255,14 @@ function methodBuilder(method: number) {
                 this.requestInterceptor(req);
                 // make the request and store the observable for later transformation
                 var observable: Observable<Response> = this.http.request(req);
+
+                // transform the obserable in accordance to the @Produces decorator
+                if (descriptor.isJSON) {
+                  observable = observable.map(res => res.json());
+                }
+
                 // intercept the response
-                observable = observable.map(this.responseInterceptor);
+                observable = this.responseInterceptor(observable);
 
                 return observable;
             };
@@ -270,4 +297,3 @@ export var DELETE = methodBuilder(RequestMethods.Delete);
  * @param {string} url - resource url of the method
  */
 export var HEAD = methodBuilder(RequestMethods.Head);
-
