@@ -1,7 +1,8 @@
 /// <reference path="node_modules/angular2/core.d.ts" />
 /// <reference path="node_modules/angular2/http.d.ts" />
 /// <reference path="node_modules/rxjs/Rx.d.ts" />
-import { Http, Request, Response } from 'angular2/http';
+import { Http, Request } from "angular2/http";
+import { Observable } from "rxjs/Observable";
 /**
 * Angular 2 RESTClient class.
 *
@@ -27,7 +28,7 @@ export declare class RESTClient {
     * @param {Response} res - response object
     * @returns {Response} res - transformed response object
     */
-    protected responseInterceptor(res: Response): Response;
+    protected responseInterceptor(res: Observable<any>): Observable<any>;
 }
 /**
  * Set the base URL of REST resource
@@ -65,6 +66,17 @@ export declare var Header: (key: string) => (target: RESTClient, propertyKey: st
  */
 export declare function Headers(headersDef: any): (target: RESTClient, propertyKey: string, descriptor: any) => any;
 /**
+ * Defines the media type(s) that the methods can produce
+ * @param MediaType producesDef - mediaType to be parsed
+ */
+export declare function Produces(producesDef: MediaType): (target: RESTClient, propertyKey: string, descriptor: any) => any;
+/**
+ * Supported @Produces media types
+ */
+export declare enum MediaType {
+    JSON = 0,
+}
+/**
  * GET method
  * @param {string} url - resource url of the method
  */
@@ -84,3 +96,8 @@ export declare var PUT: (url: string) => (target: RESTClient, propertyKey: strin
  * @param {string} url - resource url of the method
  */
 export declare var DELETE: (url: string) => (target: RESTClient, propertyKey: string, descriptor: any) => any;
+/**
+ * HEAD method
+ * @param {string} url - resource url of the method
+ */
+export declare var HEAD: (url: string) => (target: RESTClient, propertyKey: string, descriptor: any) => any;

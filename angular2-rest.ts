@@ -22,23 +22,23 @@ Table of Contents:
     @PUT(url: String)
     @DELETE(url: String)
     @Headers(object)
+    @Produces(MediaType)
 
 - Parameter Decorators:
     @Path(string)
     @Query(string)
     @Header(string)
     @Body
-
 */
 
-import {Injectable, Inject, Injector} from 'angular2/core';
+import {Inject} from "angular2/core";
 import {
 Http, Headers as AngularHeaders,
-Request, RequestOptions, RequestMethod as RequestMethods, RequestOptionsArgs,
+Request, RequestOptions, RequestMethod as RequestMethods,
 Response,
 URLSearchParams
-} from 'angular2/http';
-import {Observable} from 'rxjs/Observable';
+} from "angular2/http";
+import {Observable} from "rxjs/Observable";
 
 /**
 * Angular 2 RESTClient class.
@@ -66,6 +66,7 @@ export class RESTClient {
     * @param {Request} req - request object
     */
     protected requestInterceptor(req: Request) {
+      //
     }
 
     /**
@@ -75,8 +76,8 @@ export class RESTClient {
     * @param {Response} res - response object
     * @returns {Response} res - transformed response object
     */
-    protected responseInterceptor(res: Response): Response {
-        return res
+    protected responseInterceptor(res: Observable<any>): Observable<any> {
+        return res;
     }
 
 }
@@ -89,9 +90,9 @@ export function BaseUrl(url: string) {
     return function <TFunction extends Function>(Target: TFunction): TFunction {
         Target.prototype.getBaseUrl = function() {
             return url;
-        }
+        };
         return Target;
-    }
+    };
 }
 
 /**
@@ -102,9 +103,9 @@ export function DefaultHeaders(headers: any) {
     return function <TFunction extends Function>(Target: TFunction): TFunction {
         Target.prototype.getDefaultHeaders = function() {
             return headers;
-        }
+        };
         return Target;
-    }
+    };
 }
 
 function paramBuilder(paramName: string) {
@@ -112,13 +113,12 @@ function paramBuilder(paramName: string) {
         return function(target: RESTClient, propertyKey: string | symbol, parameterIndex: number) {
             var metadataKey = `${propertyKey}_${paramName}_parameters`;
             var paramObj: any = {
-                parameterIndex: parameterIndex,
-                key: key
-            }
+                key: key,
+                parameterIndex: parameterIndex
+            };
             if (Array.isArray(target[metadataKey])) {
                 target[metadataKey].push(paramObj);
-            }
-            else {
+            } else {
                 target[metadataKey] = [paramObj];
             }
         };
@@ -155,8 +155,29 @@ export function Headers(headersDef: any) {
     return function(target: RESTClient, propertyKey: string, descriptor: any) {
         descriptor.headers = headersDef;
         return descriptor;
-    }
+    };
 }
+
+
+/**
+ * Defines the media type(s) that the methods can produce
+ * @param MediaType producesDef - mediaType to be parsed
+ */
+export function Produces(producesDef: MediaType) {
+    return function(target: RESTClient, propertyKey: string, descriptor: any) {
+        descriptor.isJSON = producesDef === MediaType.JSON;
+        return descriptor;
+    };
+}
+
+
+/**
+ * Supported @Produces media types
+ */
+export enum MediaType {
+    JSON
+}
+
 
 function methodBuilder(method: number) {
     return function(url: string) {
@@ -176,43 +197,53 @@ function methodBuilder(method: number) {
                 }
 
                 // Path
+                var resUrl: string = url;
                 if (pPath) {
-                    for (k in pPath) {
-                        url = url.replace("{" + pPath[k].key + "}", args[pPath[k].parameterIndex]);
+                    for (var k in pPath) {
+                        if (pPath.hasOwnProperty(k)) {
+                            resUrl = resUrl.replace("{" + pPath[k].key + "}", args[pPath[k].parameterIndex]);
+                        }
                     }
                 }
 
                 // Query
-                var search = new URLSearchParams()
+                var search = new URLSearchParams();
                 if (pQuery) {
                     pQuery
-                        .filter(p => args[p.parameterIndex]) // filter out optional parameters
-                        .forEach(p => {
-                            var key = p.key;
-                            var value = args[p.parameterIndex];
-                            // if the value is a instance of Object, we stringify it
-                            if (value instanceof Object) {
-                                value = JSON.stringify(value);
-                            }
-                            search.set(encodeURIComponent(key), encodeURIComponent(value));
-                        })
+                    .filter(p => args[p.parameterIndex]) // filter out optional parameters
+                    .forEach(p => {
+                        var key = p.key;
+                        var value = args[p.parameterIndex];
+                        // if the value is a instance of Object, we stringify it
+                        if (value instanceof Object) {
+                            value = JSON.stringify(value);
+                        }
+                        search.set(encodeURIComponent(key), encodeURIComponent(value));
+                    });
                 }
 
                 // Headers
+                // set class default headers
                 var headers = new AngularHeaders(this.getDefaultHeaders());
+                // set method specific headers
                 for (var k in descriptor.headers) {
-                    headers.append(k, descriptor.headers[k]);
+                    if (descriptor.headers.hasOwnProperty(k)) {
+                        headers.append(k, descriptor.headers[k]);
+                    }
                 }
+                // set parameter specific headers
                 if (pHeader) {
                     for (var k in pHeader) {
-                        headers.append(pHeader[k].key, args[pHeader[k].parameterIndex]);
+                        if (pHeader.hasOwnProperty(k)) {
+                            headers.append(pHeader[k].key, args[pHeader[k].parameterIndex]);
+                        }
                     }
                 }
 
                 // Request options
                 var options = new RequestOptions({
                     method,
-                    url: this.getBaseUrl() + url,
+                    url: this.getBaseUrl() + resUrl,
                     headers,
                     body,
                     search
@@ -223,16 +254,22 @@ function methodBuilder(method: number) {
                 // intercept the request
                 this.requestInterceptor(req);
                 // make the request and store the observable for later transformation
-                var observable : Observable<Response> = this.http.request(req);
+                var observable: Observable<Response> = this.http.request(req);
+
+                // transform the obserable in accordance to the @Produces decorator
+                if (descriptor.isJSON) {
+                  observable = observable.map(res => res.json());
+                }
+
                 // intercept the response
-                observable = observable.map(this.responseInterceptor);
+                observable = this.responseInterceptor(observable);
 
                 return observable;
             };
 
             return descriptor;
         };
-    }
+    };
 }
 
 /**
@@ -255,3 +292,8 @@ export var PUT = methodBuilder(RequestMethods.Put);
  * @param {string} url - resource url of the method
  */
 export var DELETE = methodBuilder(RequestMethods.Delete);
+/**
+ * HEAD method
+ * @param {string} url - resource url of the method
+ */
+export var HEAD = methodBuilder(RequestMethods.Head);

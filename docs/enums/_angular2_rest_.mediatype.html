@@ -3,18 +3,18 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>angular2-rest</title>
+	<title>MediaType | angular2-rest</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="assets/css/main.css">
-	<script src="assets/js/modernizr.js"></script>
+	<link rel="stylesheet" href="../assets/css/main.css">
+	<script src="../assets/js/modernizr.js"></script>
 </head>
 <body>
 <header>
 	<div class="tsd-page-toolbar">
 		<div class="container">
 			<div class="table-wrap">
-				<div class="table-cell" id="tsd-search" data-index="assets/js/search.js" data-base=".">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.js" data-base="..">
 					<div class="field">
 						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
 						<input id="tsd-search-field" type="text" />
@@ -23,7 +23,7 @@
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="index.html" class="title">angular2-rest</a>
+					<a href="../index.html" class="title">angular2-rest</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -54,109 +54,129 @@
 		<div class="container">
 			<ul class="tsd-breadcrumb">
 				<li>
-					<a href="globals.html">Globals</a>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="../modules/_angular2_rest_.html">&quot;angular2-rest&quot;</a>
+				</li>
+				<li>
+					<a href="_angular2_rest_.mediatype.html">MediaType</a>
 				</li>
 			</ul>
-			<h1> angular2-rest</h1>
+			<h1>Enumeration MediaType</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<div class="tsd-panel tsd-typography">
-				<h1 id="angular2-rest">angular2-rest</h1>
-				<p>Angular2 HTTP client to consume RESTful services. Built on angular2/http with TypeScript.<br><strong>Note:</strong> this solutions is not production ready, it&#39;s in a very basic alpha state. Any ideas or contributions are very welcomed :)</p>
-				<h2 id="installation">Installation</h2>
-				<pre><code class="lang-sh">npm install angular2-rest
-</code></pre>
-				<h2 id="example">Example</h2>
-				<pre><code class="lang-ts">
-<span class="hljs-keyword">import</span> {Request, Response} from <span class="hljs-string">'angular2/http'</span>;
-<span class="hljs-keyword">import</span> {RESTClient, GET, PUT, POST, DELETE, BaseUrl, Headers, DefaultHeaders, Path, Body, Query} from <span class="hljs-string">'angular2-rest'</span>;
-
-<span class="hljs-keyword">import</span> {Todo} from <span class="hljs-string">'./models/Todo'</span>;
-<span class="hljs-keyword">import</span> {SessionFactory} from <span class="hljs-string">'./sessionFactory'</span>;
-
-@Injectable()
-@BaseUrl(<span class="hljs-string">"http://localhost:3000/api/"</span>)
-@DefaultHeaders({
-    <span class="hljs-string">'Accept'</span>: <span class="hljs-string">'application/json'</span>,
-    <span class="hljs-string">'Content-Type'</span>: <span class="hljs-string">'application/json'</span>
-})
-<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> TodoRESTClient extends RESTClient {
-
-    <span class="hljs-keyword">protected</span> requestInterceptor(req: Request) {
-        <span class="hljs-keyword">if</span> (SessionFactory.getInstance().isAuthenticated) {
-            req.headers.append(<span class="hljs-string">'jwt'</span>, SessionFactory.getInstance().credentials.jwt);
-        }
-    }
-
-    <span class="hljs-keyword">protected</span> requestInterceptor(req: Response) {
-        <span class="hljs-comment">// do sg with responses</span>
-    }
-
-    @GET(<span class="hljs-string">"todo/"</span>)
-    <span class="hljs-keyword">public</span> getTodos( @Query(<span class="hljs-string">"sort"</span>) sort?: <span class="hljs-built_in">string</span>): Observable { <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; };
-
-    @GET(<span class="hljs-string">"todo/{id}"</span>)
-    <span class="hljs-keyword">public</span> getTodoById( @Path(<span class="hljs-string">"id"</span>) id: <span class="hljs-built_in">string</span>): Observable { <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; };
-
-    @POST(<span class="hljs-string">"todo"</span>)
-    <span class="hljs-keyword">public</span> postTodo( @Body todo: Todo): Observable { <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; };
-
-    @PUT(<span class="hljs-string">"todo/{id}"</span>)
-    <span class="hljs-keyword">public</span> putTodoById( @Path(<span class="hljs-string">"id"</span>) id: <span class="hljs-built_in">string</span>, @Body todo: Todo): Observable { <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; };
-
-    @DELETE(<span class="hljs-string">"todo/{id}"</span>)
-    <span class="hljs-keyword">public</span> deleteTodoById( @Path(<span class="hljs-string">"id"</span>) id: <span class="hljs-built_in">string</span>): Observable { <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; };
-
-}
-</code></pre>
-				<h2 id="api-docs">API Docs</h2>
-				<h3 id="restclient">RESTClient</h3>
-				<h4 id="methods-">Methods:</h4>
-				<ul>
-					<li><code>getBaseUrl(): string</code>: returns the base url of RESTClient</li>
-					<li><code>getDefaultHeaders(): Object</code>: returns the default headers of RESTClient in a key-value pair</li>
-				</ul>
-				<h3 id="class-decorators-">Class decorators:</h3>
-				<ul>
-					<li><code>@BaseUrl(url: string)</code></li>
-					<li><code>@DefaultHeaders(headers: Object)</code></li>
-				</ul>
-				<h3 id="method-decorators-">Method decorators:</h3>
-				<ul>
-					<li><code>@GET(url: String)</code></li>
-					<li><code>@POST(url: String)</code></li>
-					<li><code>@PUT(url: String)</code></li>
-					<li><code>@DELETE(url: String)</code></li>
-					<li><code>@Headers(headers: Object)</code></li>
-				</ul>
-				<h3 id="parameter-decorators-">Parameter decorators:</h3>
-				<ul>
-					<li><code>@Path(key: string)</code></li>
-					<li><code>@Query(key: string)</code></li>
-					<li><code>@Header(key: string)</code></li>
-					<li><code>@Body</code></li>
-				</ul>
-				<h1 id="license">License</h1>
-				<p>MIT</p>
-			</div>
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Supported @Produces media types</p>
+					</div>
+				</div>
+			</section>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Enumeration members</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="_angular2_rest_.mediatype.html#json" class="tsd-kind-icon">JSON</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Enumeration members</h2>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="json" class="tsd-anchor"></a>
+					<h3>JSON</h3>
+					<div class="tsd-signature tsd-kind-icon">JSON<span class="tsd-signature-symbol">:</span> </div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/Discountrobot/angular2-rest/blob/master/angular2-rest.ts#L178">angular2-rest.ts:178</a></li>
+						</ul>
+					</aside>
+				</section>
+			</section>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 			<nav class="tsd-navigation primary">
 				<ul>
 					<li class="globals  ">
-						<a href="globals.html"><em>Globals</em></a>
+						<a href="../globals.html"><em>Globals</em></a>
 					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="modules/_angular2_rest_.html">"angular2-<wbr>rest"</a>
+					<li class="current tsd-kind-external-module">
+						<a href="../modules/_angular2_rest_.html">"angular2-<wbr>rest"</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-enum tsd-parent-kind-external-module">
+						<a href="_angular2_rest_.mediatype.html" class="tsd-kind-icon">Media<wbr>Type</a>
+						<ul>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="_angular2_rest_.mediatype.html#json" class="tsd-kind-icon">JSON</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="../classes/_angular2_rest_.restclient.html" class="tsd-kind-icon">RESTClient</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module">
+						<a href="../modules/_angular2_rest_.html#body" class="tsd-kind-icon">Body</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module">
+						<a href="../modules/_angular2_rest_.html#delete" class="tsd-kind-icon">DELETE</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module">
+						<a href="../modules/_angular2_rest_.html#get" class="tsd-kind-icon">GET</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module">
+						<a href="../modules/_angular2_rest_.html#head" class="tsd-kind-icon">HEAD</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module">
+						<a href="../modules/_angular2_rest_.html#header" class="tsd-kind-icon">Header</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module">
+						<a href="../modules/_angular2_rest_.html#post" class="tsd-kind-icon">POST</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module">
+						<a href="../modules/_angular2_rest_.html#put" class="tsd-kind-icon">PUT</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module">
+						<a href="../modules/_angular2_rest_.html#path" class="tsd-kind-icon">Path</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module">
+						<a href="../modules/_angular2_rest_.html#query" class="tsd-kind-icon">Query</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module">
+						<a href="../modules/_angular2_rest_.html#baseurl" class="tsd-kind-icon">Base<wbr>Url</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module">
+						<a href="../modules/_angular2_rest_.html#defaultheaders" class="tsd-kind-icon">Default<wbr>Headers</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module">
+						<a href="../modules/_angular2_rest_.html#headers" class="tsd-kind-icon">Headers</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module">
+						<a href="../modules/_angular2_rest_.html#produces" class="tsd-kind-icon">Produces</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_angular2_rest_.html#methodbuilder" class="tsd-kind-icon">method<wbr>Builder</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_angular2_rest_.html#parambuilder" class="tsd-kind-icon">param<wbr>Builder</a>
+					</li>
 				</ul>
 			</nav>
 		</div>
@@ -225,7 +245,7 @@
 	<p>Generated using <a href="http://typedoc.io" target="_blank">TypeDoc</a></p>
 </div>
 <div class="overlay"></div>
-<script src="assets/js/main.js"></script>
-<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
+<script src="../assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="../assets/js/search.js"><' + '/script>');</script>
 </body>
 </html>
