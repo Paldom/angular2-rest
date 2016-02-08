@@ -76,7 +76,7 @@ export class RESTClient {
     * @param {Response} res - response object
     * @returns {Response} res - transformed response object
     */
-    protected responseInterceptor(res: Observable<any>): Observable<any> {
+    protected responseInterceptor(res: Observable<Response>): Observable<Response> {
         return res;
     }
 
