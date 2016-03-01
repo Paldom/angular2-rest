@@ -1,7 +1,3 @@
-/// <reference path="node_modules/angular2/core.d.ts" />
-/// <reference path="node_modules/angular2/http.d.ts" />
-/// <reference path="node_modules/rxjs/Rx.d.ts" />
-
 /*
 
 angular2-rest
