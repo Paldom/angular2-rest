@@ -250,7 +250,7 @@ function methodBuilder(method: number) {
                 // intercept the request
                 this.requestInterceptor(req);
                 // make the request and store the observable for later transformation
-                var observable: Observable<Response> = this.http.request(req);
+                var observable: Observable<Response> = this.http.request(req).publishReplay().refCount();
 
                 // transform the obserable in accordance to the @Produces decorator
                 if (descriptor.isJSON) {
