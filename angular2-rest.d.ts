@@ -1,7 +1,4 @@
-/// <reference path="node_modules/angular2/core.d.ts" />
-/// <reference path="node_modules/angular2/http.d.ts" />
-/// <reference path="node_modules/rxjs/Rx.d.ts" />
-import { Http, Request } from "angular2/http";
+import { Http, Request, Response } from "angular2/http";
 import { Observable } from "rxjs/Observable";
 /**
 * Angular 2 RESTClient class.
@@ -28,7 +25,7 @@ export declare class RESTClient {
     * @param {Response} res - response object
     * @returns {Response} res - transformed response object
     */
-    protected responseInterceptor(res: Observable<any>): Observable<any>;
+    protected responseInterceptor(res: Observable<Response>): Observable<Response>;
 }
 /**
  * Set the base URL of REST resource

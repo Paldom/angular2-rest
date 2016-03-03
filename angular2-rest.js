@@ -1,18 +1,3 @@
-/// <reference path="node_modules/angular2/core.d.ts" />
-/// <reference path="node_modules/angular2/http.d.ts" />
-/// <reference path="node_modules/rxjs/Rx.d.ts" />
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
 /*
 
 angular2-rest
@@ -41,6 +26,18 @@ Table of Contents:
     @Header(string)
     @Body
 */
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 var core_1 = require("angular2/core");
 var http_1 = require("angular2/http");
 /**
@@ -249,7 +246,7 @@ function methodBuilder(method) {
                 // intercept the request
                 this.requestInterceptor(req);
                 // make the request and store the observable for later transformation
-                var observable = this.http.request(req);
+                var observable = this.http.request(req).publishReplay().refCount();
                 // transform the obserable in accordance to the @Produces decorator
                 if (descriptor.isJSON) {
                     observable = observable.map(function (res) { return res.json(); });

@@ -1,7 +1,3 @@
-/// <reference path="node_modules/angular2/core.d.ts" />
-/// <reference path="node_modules/angular2/http.d.ts" />
-/// <reference path="node_modules/rxjs/Rx.d.ts" />
-
 /*
 
 angular2-rest
@@ -76,7 +72,7 @@ export class RESTClient {
     * @param {Response} res - response object
     * @returns {Response} res - transformed response object
     */
-    protected responseInterceptor(res: Observable<any>): Observable<any> {
+    protected responseInterceptor(res: Observable<Response>): Observable<Response> {
         return res;
     }
 
@@ -254,7 +250,7 @@ function methodBuilder(method: number) {
                 // intercept the request
                 this.requestInterceptor(req);
                 // make the request and store the observable for later transformation
-                var observable: Observable<Response> = this.http.request(req);
+                var observable: Observable<Response> = this.http.request(req).publishReplay().refCount();
 
                 // transform the obserable in accordance to the @Produces decorator
                 if (descriptor.isJSON) {
