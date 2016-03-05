@@ -1,6 +1,3 @@
-/// <reference path="node_modules/angular2/core.d.ts" />
-/// <reference path="node_modules/angular2/http.d.ts" />
-/// <reference path="node_modules/rxjs/Rx.d.ts" />
 import { Http, Request } from "angular2/http";
 import { Observable } from "rxjs/Observable";
 /**
