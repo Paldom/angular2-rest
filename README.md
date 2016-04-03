@@ -52,9 +52,27 @@ export class TodoRESTClient extends RESTClient {
     public deleteTodoById( @Path("id") id: string): Observable { return null; };
 
 }
-
 ```
 
+### Using it in your component
+
+
+``` ts
+@Component({
+  selector: 'to-do',
+  viewProviders: [TodoRESTClient],
+})
+@View({
+  templateUrl: 'components/to-do-template.html',
+})
+export class ToDoCmp {
+
+  constructor(todoRESTClient: TodoRESTClient) {
+  }
+  
+  //Use todoRESTClient   
+}
+```
 ## API Docs
 
 ### RESTClient
