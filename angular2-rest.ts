@@ -82,13 +82,19 @@ export class RESTClient {
  * Set the base URL of REST resource
  * @param {String} url - base URL
  */
-export function BaseUrl(url: string) {
-    return function <TFunction extends Function>(Target: TFunction): TFunction {
-        Target.prototype.getBaseUrl = function() {
+export function BaseUrl(url: string|Function) {
+    let urlFunction:string|Function = function() {
             return url;
-        };
-        return Target;
     };
+
+    if (typeof url === "function") {
+        urlFunction = url;
+    }
+
+    return function <TFunction extends Function>(Target: TFunction): TFunction {
+        Target.prototype.getBaseUrl = urlFunction;
+        return Target;
+    }
 }
 
 /**
