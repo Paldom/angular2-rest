@@ -113,6 +113,22 @@
 
 }
 </code></pre>
+				<h3 id="using-it-in-your-component">Using it in your component</h3>
+				<pre><code class="lang-ts">@Component({
+  selector: <span class="hljs-string">'to-do'</span>,
+  viewProviders: [TodoRESTClient],
+})
+@View({
+  templateUrl: <span class="hljs-string">'components/to-do-template.html'</span>,
+})
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> ToDoCmp {
+
+  <span class="hljs-keyword">constructor</span>(todoRESTClient: TodoRESTClient) {
+  }
+
+  <span class="hljs-comment">//Use todoRESTClient   </span>
+}
+</code></pre>
 				<h2 id="api-docs">API Docs</h2>
 				<h3 id="restclient">RESTClient</h3>
 				<h4 id="methods-">Methods:</h4>

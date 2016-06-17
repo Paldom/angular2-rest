@@ -1,3 +1,4 @@
+///<reference path="node_modules/angular2/typings/browser.d.ts"/>
 /*
 
 angular2-rest
@@ -41,6 +42,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 var core_1 = require("angular2/core");
 var http_1 = require("angular2/http");
+require('rxjs/add/operator/map');
 /**
 * Angular 2 RESTClient class.
 *
@@ -80,10 +82,9 @@ var RESTClient = (function () {
     };
     RESTClient = __decorate([
         __param(0, core_1.Inject(http_1.Http)), 
-        __metadata('design:paramtypes', [(typeof (_a = typeof http_1.Http !== 'undefined' && http_1.Http) === 'function' && _a) || Object])
+        __metadata('design:paramtypes', [http_1.Http])
     ], RESTClient);
     return RESTClient;
-    var _a;
 }());
 exports.RESTClient = RESTClient;
 /**

@@ -1,3 +1,4 @@
+///<reference path="node_modules/angular2/typings/browser.d.ts"/>
 /*
 
 angular2-rest
@@ -35,6 +36,7 @@ Response,
 URLSearchParams
 } from "angular2/http";
 import {Observable} from "rxjs/Observable";
+import 'rxjs/add/operator/map';
 
 /**
 * Angular 2 RESTClient class.
