@@ -1,5 +1,7 @@
+/// <reference path="node_modules/angular2/typings/browser.d.ts" />
 import { Http, Request } from "angular2/http";
 import { Observable } from "rxjs/Observable";
+import 'rxjs/add/operator/map';
 /**
 * Angular 2 RESTClient class.
 *
@@ -31,7 +33,7 @@ export declare class RESTClient {
  * Set the base URL of REST resource
  * @param {String} url - base URL
  */
-export declare function BaseUrl(url: string): <TFunction extends Function>(Target: TFunction) => TFunction;
+export declare function BaseUrl(url: string | Function): <TFunction extends Function>(Target: TFunction) => TFunction;
 /**
  * Set default headers for every method of the RESTClient
  * @param {Object} headers - deafult headers in a key-value pair
