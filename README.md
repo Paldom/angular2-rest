@@ -1,5 +1,5 @@
 # angular2-rest
-Angular2 HTTP client to consume RESTful services. Built on angular2/http with TypeScript.  
+Angular2 HTTP client to consume RESTful services. Built on @angular/http with TypeScript.
 **Note:** this solutions is not production ready, it's in a very basic alpha state. Any ideas or contributions are very welcomed :)
 
 ## Installation
@@ -12,7 +12,7 @@ npm install angular2-rest
 
 ```ts
 
-import {Request, Response} from 'angular2/http';
+import {Request, Response} from '@angular/http';
 import {RESTClient, GET, PUT, POST, DELETE, BaseUrl, Headers, DefaultHeaders, Path, Body, Query} from 'angular2-rest';
 
 import {Todo} from './models/Todo';
