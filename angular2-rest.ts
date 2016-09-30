@@ -1,124 +1,132 @@
 /*
 
-angular2-rest
-(c) Domonkos Pal
-License: MIT
+ angular2-rest
+ (c) Domonkos Pal
+ License: MIT
 
-Table of Contents:
+ Table of Contents:
 
-- class RESTClient
+ - class RESTClient
 
-- Class Decorators:
-    @BaseUrl(String)
-    @DefaultHeaders(Object)
+ - Class Decorators:
+ @BaseUrl(String)
+ @DefaultHeaders(Object)
 
-- Method Decorators:
-    @GET(url: String)
-    @POST(url: String)
-    @PUT(url: String)
-    @DELETE(url: String)
-    @Headers(object)
-    @Produces(MediaType)
+ - Method Decorators:
+ @GET(url: String)
+ @POST(url: String)
+ @PUT(url: String)
+ @DELETE(url: String)
+ @Headers(object)
+ @Produces(MediaType)
 
-- Parameter Decorators:
-    @Path(string)
-    @Query(string)
-    @Header(string)
-    @Body
-*/
-
-import {Inject} from "angular2/core";
-import {
-Http, Headers as AngularHeaders,
-Request, RequestOptions, RequestMethod as RequestMethods,
-Response,
-URLSearchParams
-} from "angular2/http";
-import {Observable} from "rxjs/Observable";
-
-/**
-* Angular 2 RESTClient class.
-*
-* @class RESTClient
-* @constructor
-*/
-export class RESTClient {
-
-    public constructor( @Inject(Http) protected http: Http) {
-    }
-
-    protected getBaseUrl(): string {
-        return null;
-    };
-
-    protected getDefaultHeaders(): Object {
-        return null;
-    };
-
-    /**
-    * Request Interceptor
-    *
-    * @method requestInterceptor
-    * @param {Request} req - request object
-    */
-    protected requestInterceptor(req: Request) {
-      //
-    }
-
-    /**
-    * Response Interceptor
-    *
-    * @method responseInterceptor
-    * @param {Response} res - response object
-    * @returns {Response} res - transformed response object
-    */
-    protected responseInterceptor(res: Observable<any>): Observable<any> {
-        return res;
-    }
-
-}
-
-/**
- * Set the base URL of REST resource
- * @param {String} url - base URL
+ - Parameter Decorators:
+ @Path(string)
+ @Query(string)
+ @Header(string)
+ @Body
  */
-export function BaseUrl(url: string) {
-    return function <TFunction extends Function>(Target: TFunction): TFunction {
-        Target.prototype.getBaseUrl = function() {
-            return url;
-        };
-        return Target;
-    };
+
+import {
+  Headers as AngularHeaders,
+  Request,
+  RequestOptions,
+  RequestMethod as RequestMethods,
+  Response,
+  URLSearchParams,
+  RequestOptionsArgs
+} from "@angular/http";
+import {Observable} from "rxjs/Observable";
+import {MapSignature} from "rxjs/operator/map";
+
+/**
+ * Angular 2 RestClient class.
+ *
+ * @class RESTClient
+ * @constructor
+ */
+export class RestClient {
+
+  public constructor( protected httpClient: HttpClient) {
+  }
+
+  protected getServiceId(): string{
+    return null;
+  }
+
+  protected getBaseUrl(): string {
+    return null;
+  };
+
+  protected getDefaultHeaders(): Object {
+    return null;
+  };
+
+  /**
+   * Request Interceptor
+   *
+   * @method requestInterceptor
+   * @param {Request} req - request object
+   */
+  protected requestInterceptor(req: Request) {
+    //
+  }
+
+  /**
+   * Response Interceptor
+   *
+   * @method responseInterceptor
+   * @param {Response} res - response object
+   * @returns {Response} res - transformed response object
+   */
+  protected responseInterceptor(res: Observable<any>): Observable<any> {
+    return res;
+  }
+
 }
 
 /**
- * Set default headers for every method of the RESTClient
+ * Configure the REST Client
+ * @param {String} url - base URL
+ * @param {String} serviceId - Service ID
  * @param {Object} headers - deafult headers in a key-value pair
  */
-export function DefaultHeaders(headers: any) {
-    return function <TFunction extends Function>(Target: TFunction): TFunction {
-        Target.prototype.getDefaultHeaders = function() {
-            return headers;
-        };
-        return Target;
-    };
+export function Client(args:{serviceId?: string, baseUrl?: string, headers?: any}) {
+  return function <TFunction extends Function>(Target: TFunction): TFunction {
+    if(args.serviceId){
+      Target.prototype.getServiceId = function() {
+        return args.serviceId;
+      };
+    }
+    if(args.baseUrl){
+      Target.prototype.getBaseUrl = function() {
+        return args.baseUrl;
+      };
+    }
+    if(args.headers){
+      Target.prototype.getDefaultHeaders = function() {
+        return args.headers;
+      };
+    }
+    return Target;
+  };
 }
 
 function paramBuilder(paramName: string) {
-    return function(key: string) {
-        return function(target: RESTClient, propertyKey: string | symbol, parameterIndex: number) {
-            var metadataKey = `${propertyKey}_${paramName}_parameters`;
-            var paramObj: any = {
-                key: key,
-                parameterIndex: parameterIndex
-            };
-            if (Array.isArray(target[metadataKey])) {
-                target[metadataKey].push(paramObj);
-            } else {
-                target[metadataKey] = [paramObj];
-            }
-        };
+  return function(key: string) {
+    return function(target: RestClient, propertyKey: string | symbol, parameterIndex: number) {
+      var metadataKey = `${propertyKey}_${paramName}_parameters`;
+      var paramObj: any = {
+        key: key,
+        parameterIndex: parameterIndex
+      };
+      if (Array.isArray(target[metadataKey])) {
+        target[metadataKey].push(paramObj);
+      } else {
+        target[metadataKey] = [paramObj];
+      }
     };
+  };
 }
 
 /**
@@ -148,22 +156,36 @@ export var Header = paramBuilder("Header");
  * @param {Object} headersDef - custom headers in a key-value pair
  */
 export function Headers(headersDef: any) {
-    return function(target: RESTClient, propertyKey: string, descriptor: any) {
-        descriptor.headers = headersDef;
-        return descriptor;
-    };
+  return function(target: RestClient, propertyKey: string, descriptor: any) {
+    descriptor.headers = headersDef;
+    return descriptor;
+  };
 }
 
+/**
+ * Defines a custom mapper function
+ * Overrides @Produces
+ * @param MediaType media type or custom mapper function
+ */
+export function Map(mapper:(resp : any)=>any){
+  return function(target: RestClient, propertyKey: string, descriptor: any) {
+    descriptor.mapper = res => res.json();
+  }
+}
 
 /**
  * Defines the media type(s) that the methods can produce
- * @param MediaType producesDef - mediaType to be parsed
+ * @param MediaType media type or custom mapper function
  */
-export function Produces(producesDef: MediaType) {
-    return function(target: RESTClient, propertyKey: string, descriptor: any) {
-        descriptor.isJSON = producesDef === MediaType.JSON;
-        return descriptor;
-    };
+export function Produces(mime:MediaType) {
+  return function(target: RestClient, propertyKey: string, descriptor: any) {
+    if(mime != undefined) {
+      if (mime === MediaType.JSON) {
+        descriptor.mime = res => res.json();
+      }
+    }
+    return descriptor;
+  };
 }
 
 
@@ -171,125 +193,140 @@ export function Produces(producesDef: MediaType) {
  * Supported @Produces media types
  */
 export enum MediaType {
-    JSON
+  JSON
 }
 
 
 function methodBuilder(method: number) {
-    return function(url: string) {
-        return function(target: RESTClient, propertyKey: string, descriptor: any) {
+  return function(url: string) {
+    return function(target: RestClient, propertyKey: string, descriptor: any) {
 
-            var pPath = target[`${propertyKey}_Path_parameters`];
-            var pQuery = target[`${propertyKey}_Query_parameters`];
-            var pBody = target[`${propertyKey}_Body_parameters`];
-            var pHeader = target[`${propertyKey}_Header_parameters`];
+      var pPath = target[`${propertyKey}_Path_parameters`];
+      var pQuery = target[`${propertyKey}_Query_parameters`];
+      var pBody = target[`${propertyKey}_Body_parameters`];
+      var pHeader = target[`${propertyKey}_Header_parameters`];
 
-            descriptor.value = function(...args: any[]) {
+      descriptor.value = function(...args: any[]) {
 
-                // Body
-                var body = null;
-                if (pBody) {
-                    body = JSON.stringify(args[pBody[0].parameterIndex]);
-                }
+        // Body
+        var body = null;
+        if (pBody) {
+          body = JSON.stringify(args[pBody[0].parameterIndex]);
+        }
 
-                // Path
-                var resUrl: string = url;
-                if (pPath) {
-                    for (var k in pPath) {
-                        if (pPath.hasOwnProperty(k)) {
-                            resUrl = resUrl.replace("{" + pPath[k].key + "}", args[pPath[k].parameterIndex]);
-                        }
-                    }
-                }
+        // Path
+        var resUrl: string = url;
+        if (pPath) {
+          for (var k in pPath) {
+            if (pPath.hasOwnProperty(k)) {
+              resUrl = resUrl.replace("{" + pPath[k].key + "}", args[pPath[k].parameterIndex]);
+            }
+          }
+        }
+        if(this.getBaseUrl() != null){
+          var baseUrl = this.getBaseUrl();
+          if(baseUrl.indexOf("/") == baseUrl.length-1 && resUrl.indexOf("/") == 0){
+            baseUrl = baseUrl.substring(0, 1);
+          }
+          resUrl = baseUrl + resUrl;
+        }
 
-                // Query
-                var search = new URLSearchParams();
-                if (pQuery) {
-                    pQuery
-                    .filter(p => args[p.parameterIndex]) // filter out optional parameters
-                    .forEach(p => {
-                        var key = p.key;
-                        var value = args[p.parameterIndex];
-                        // if the value is a instance of Object, we stringify it
-                        if (value instanceof Object) {
-                            value = JSON.stringify(value);
-                        }
-                        search.set(encodeURIComponent(key), encodeURIComponent(value));
-                    });
-                }
+        // Query
+        var search = new URLSearchParams();
+        if (pQuery) {
+          pQuery
+            .filter(p => args[p.parameterIndex]) // filter out optional parameters
+            .forEach(p => {
+              var key = p.key;
+              var value = args[p.parameterIndex];
+              // if the value is a instance of Object, we stringify it
+              if (value instanceof Object) {
+                value = JSON.stringify(value);
+              }
+              search.set(encodeURIComponent(key), encodeURIComponent(value));
+            });
+        }
 
-                // Headers
-                // set class default headers
-                var headers = new AngularHeaders(this.getDefaultHeaders());
-                // set method specific headers
-                for (var k in descriptor.headers) {
-                    if (descriptor.headers.hasOwnProperty(k)) {
-                        headers.append(k, descriptor.headers[k]);
-                    }
-                }
-                // set parameter specific headers
-                if (pHeader) {
-                    for (var k in pHeader) {
-                        if (pHeader.hasOwnProperty(k)) {
-                            headers.append(pHeader[k].key, args[pHeader[k].parameterIndex]);
-                        }
-                    }
-                }
+        // Headers
+        // set class default headers
+        var headers = new AngularHeaders(this.getDefaultHeaders());
+        // set method specific headers
+        for (var k in descriptor.headers) {
+          if (descriptor.headers.hasOwnProperty(k)) {
+            headers.append(k, descriptor.headers[k]);
+          }
+        }
+        // set parameter specific headers
+        if (pHeader) {
+          for (var k in pHeader) {
+            if (pHeader.hasOwnProperty(k)) {
+              headers.append(pHeader[k].key, args[pHeader[k].parameterIndex]);
+            }
+          }
+        }
 
-                // Request options
-                var options = new RequestOptions({
-                    method,
-                    url: this.getBaseUrl() + resUrl,
-                    headers,
-                    body,
-                    search
-                });
+        // Request options
+        var options = new RequestOptions({
+          method,
+          url: resUrl,
+          headers,
+          body,
+          search
+        });
 
-                var req = new Request(options);
+        var req = new Request(options);
 
-                // intercept the request
-                this.requestInterceptor(req);
-                // make the request and store the observable for later transformation
-                var observable: Observable<Response> = this.http.request(req);
+        // intercept the request
+        this.requestInterceptor(req);
+        // make the request and store the observable for later transformation
+        var observable: Observable<Response> = this.httpClient.request(req);
 
-                // transform the obserable in accordance to the @Produces decorator
-                if (descriptor.isJSON) {
-                  observable = observable.map(res => res.json());
-                }
+        // transform the observable in accordance to the @Produces decorator
+        if (descriptor.mapper != undefined) {
+          observable = observable.map(descriptor.mapper);
+        }else if (descriptor.mime != undefined) {
+          observable = observable.map(descriptor.mime);
+        }
 
-                // intercept the response
-                observable = this.responseInterceptor(observable);
+        // intercept the response
+        observable = this.responseInterceptor(observable);
 
-                return observable;
-            };
+        return observable;
+      };
 
-            return descriptor;
-        };
+      return descriptor;
     };
+  };
 }
 
 /**
- * GET method
+ * Get method
  * @param {string} url - resource url of the method
  */
-export var GET = methodBuilder(RequestMethods.Get);
+export var Get = methodBuilder(RequestMethods.Get);
 /**
- * POST method
+ * Post method
  * @param {string} url - resource url of the method
  */
-export var POST = methodBuilder(RequestMethods.Post);
+export var Post = methodBuilder(RequestMethods.Post);
 /**
- * PUT method
+ * Put method
  * @param {string} url - resource url of the method
  */
-export var PUT = methodBuilder(RequestMethods.Put);
+export var Put = methodBuilder(RequestMethods.Put);
 /**
- * DELETE method
+ * Delete method
  * @param {string} url - resource url of the method
  */
-export var DELETE = methodBuilder(RequestMethods.Delete);
+export var Delete = methodBuilder(RequestMethods.Delete);
 /**
- * HEAD method
+ * Head method
  * @param {string} url - resource url of the method
  */
-export var HEAD = methodBuilder(RequestMethods.Head);
+export var Head = methodBuilder(RequestMethods.Head);
+
+export interface HttpClient{
+
+  request(url: string | Request, options?: RequestOptionsArgs): Observable<Response>;
+
+}

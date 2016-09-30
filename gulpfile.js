@@ -6,7 +6,7 @@ var gulp = require('gulp'),
   tsc = require('gulp-tsc'),
   typescript = require('gulp-typescript'),
   typedoc = require("gulp-typedoc");
-  
+
 var objectMerge = require('object-merge');
 
 var tsProject = typescript.createProject('./tsconfig.json');
@@ -14,20 +14,20 @@ var tsConfig = require('./tsconfig.json');
 var tsCompileDev = tsConfig.compilerOptions || {};
 var tsCompileProd = objectMerge(tsCompileDev, {
   "removeComments": true,
-  "declaration": false,
-  "sourceMap": false
+  "declaration": true,
+  "sourceMap": true
 });
 
 gulp.task('build.js.dev', function () {
   gulp.src(['./*.ts'])
-    .pipe(tsc(tsCompileDev))
+    .pipe(typescript(tsCompileDev))
     .pipe(gulp.dest('.'));
 });
 
 gulp.task('build.js.prod', function () {
   gulp.src(['./*.ts'])
     .pipe(sourcemaps.init())
-    .pipe(tsc(tsCompileProd))
+    .pipe(typescript(tsCompileProd))
     .pipe(uglify())
     .pipe(rename({extname: ".min.js"}))
     .pipe(sourcemaps.write())
@@ -53,4 +53,4 @@ gulp.task("typedoc", function () {
     ;
 });
 
-gulp.task('default', ['build.js.dev', 'typedoc'])
+gulp.task('default', ['build.js.dev', 'typedoc']);
