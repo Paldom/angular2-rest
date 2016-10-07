@@ -44,7 +44,7 @@ gulp.task("typedoc", function () {
     .src(['./*.ts'])
     .pipe(typedoc({
       module: "commonjs",
-      target: "es5",
+      target: "es6",
       out: "docs/",
       emitDecoratorMetadata: true,
       experimentalDecorators: true,

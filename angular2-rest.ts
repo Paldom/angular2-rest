@@ -37,7 +37,8 @@ import {
   RequestOptionsArgs
 } from "@angular/http";
 import {Observable} from "rxjs/Observable";
-import {MapSignature} from "rxjs/operator/map";
+// import {MapSignature} from "rxjs/operator/map";
+import "rxjs/add/operator/map";
 
 /**
  * Angular 2 RestClient class.
