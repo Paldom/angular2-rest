@@ -169,7 +169,8 @@ export function Headers(headersDef: any) {
  */
 export function Map(mapper:(resp : any)=>any){
   return function(target: RestClient, propertyKey: string, descriptor: any) {
-    descriptor.mapper = res => res.json();
+    descriptor.mapper = mapper;
+    return descriptor;
   }
 }
 
