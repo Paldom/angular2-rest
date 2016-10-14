@@ -165,12 +165,28 @@ export function Headers(headersDef: any) {
 
 /**
  * Defines a custom mapper function
- * Overrides @Produces
- * @param MediaType media type or custom mapper function
+ * @param mapper function to map
  */
 export function Map(mapper:(resp : any)=>any){
   return function(target: RestClient, propertyKey: string, descriptor: any) {
-    descriptor.mapper = mapper;
+    if(!descriptor.mappers){
+      descriptor.mappers = [];
+    }
+    descriptor.mappers.push(mapper);
+    return descriptor;
+  }
+}
+
+/**
+ * Called just before emitting the request, used to add functions to the observable
+ * @param emitter function to add functions to the observable
+ */
+export function OnEmit(emitter:(resp : Observable<any>)=>Observable<any>){
+  return function(target: RestClient, propertyKey: string, descriptor: any) {
+    if(!descriptor.emitters){
+      descriptor.emitters = [];
+    }
+    descriptor.emitters.push(emitter);
     return descriptor;
   }
 }
@@ -284,10 +300,18 @@ function methodBuilder(method: number) {
         var observable: Observable<Response> = this.httpClient.request(req);
 
         // transform the observable in accordance to the @Produces decorator
-        if (descriptor.mapper != undefined) {
-          observable = observable.map(descriptor.mapper);
-        }else if (descriptor.mime != undefined) {
+        if (descriptor.mime) {
           observable = observable.map(descriptor.mime);
+        }
+        if(descriptor.mappers){
+          descriptor.mappers.forEach(mapper => {
+            observable = observable.map(mapper);
+          })
+        }
+        if(descriptor.emitters){
+          descriptor.emitters.forEach(handler => {
+            observable = handler(observable);
+          })
         }
 
         // intercept the response

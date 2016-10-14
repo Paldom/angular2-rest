@@ -28,6 +28,8 @@
  */
 "use strict";
 var http_1 = require("@angular/http");
+// import {MapSignature} from "rxjs/operator/map";
+require("rxjs/add/operator/map");
 /**
  * Angular 2 RestClient class.
  *
@@ -153,11 +155,29 @@ exports.Headers = Headers;
  */
 function Map(mapper) {
     return function (target, propertyKey, descriptor) {
-        descriptor.mapper = mapper;
+        if (!descriptor.mappers) {
+            descriptor.mappers = [];
+        }
+        descriptor.mappers.push(mapper);
         return descriptor;
     };
 }
 exports.Map = Map;
+/**
+ * Defines a custom mapper function
+ * Overrides @Produces
+ * @param MediaType media type or custom mapper function
+ */
+function Handler(handler) {
+    return function (target, propertyKey, descriptor) {
+        if (!descriptor.handlers) {
+            descriptor.handlers = [];
+        }
+        descriptor.handlers.push(handler);
+        return descriptor;
+    };
+}
+exports.Handler = Handler;
 /**
  * Defines the media type(s) that the methods can produce
  * @param MediaType media type or custom mapper function
@@ -259,11 +279,18 @@ function methodBuilder(method) {
                 // make the request and store the observable for later transformation
                 var observable = this.httpClient.request(req);
                 // transform the observable in accordance to the @Produces decorator
-                if (descriptor.mapper != undefined) {
-                    observable = observable.map(descriptor.mapper);
-                }
-                else if (descriptor.mime != undefined) {
+                if (descriptor.mime) {
                     observable = observable.map(descriptor.mime);
+                }
+                if (descriptor.mappers) {
+                    descriptor.mappers.forEach(function (mapper) {
+                        observable = observable.map(mapper);
+                    });
+                }
+                if (descriptor.handlers) {
+                    descriptor.handlers.forEach(function (handler) {
+                        observable = handler(observable);
+                    });
                 }
                 // intercept the response
                 observable = this.responseInterceptor(observable);
