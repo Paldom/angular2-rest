@@ -340,6 +340,12 @@ export var Post = methodBuilder(RequestMethods.Post);
  * @param {string} url - resource url of the method
  */
 export var Put = methodBuilder(RequestMethods.Put);
+
+/**
+ * Patch method
+ * @param {string} url - resource url of the method
+ */
+export var Patch = methodBuilder(RequestMethods.Patch);
 /**
  * Delete method
  * @param {string} url - resource url of the method
