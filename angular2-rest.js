@@ -150,8 +150,7 @@ function Headers(headersDef) {
 exports.Headers = Headers;
 /**
  * Defines a custom mapper function
- * Overrides @Produces
- * @param MediaType media type or custom mapper function
+ * @param mapper function to map
  */
 function Map(mapper) {
     return function (target, propertyKey, descriptor) {
@@ -164,20 +163,19 @@ function Map(mapper) {
 }
 exports.Map = Map;
 /**
- * Defines a custom mapper function
- * Overrides @Produces
- * @param MediaType media type or custom mapper function
+ * Called just before emitting the request, used to add functions to the observable
+ * @param emitter function to add functions to the observable
  */
-function Handler(handler) {
+function OnEmit(emitter) {
     return function (target, propertyKey, descriptor) {
-        if (!descriptor.handlers) {
-            descriptor.handlers = [];
+        if (!descriptor.emitters) {
+            descriptor.emitters = [];
         }
-        descriptor.handlers.push(handler);
+        descriptor.emitters.push(emitter);
         return descriptor;
     };
 }
-exports.Handler = Handler;
+exports.OnEmit = OnEmit;
 /**
  * Defines the media type(s) that the methods can produce
  * @param MediaType media type or custom mapper function
@@ -287,8 +285,8 @@ function methodBuilder(method) {
                         observable = observable.map(mapper);
                     });
                 }
-                if (descriptor.handlers) {
-                    descriptor.handlers.forEach(function (handler) {
+                if (descriptor.emitters) {
+                    descriptor.emitters.forEach(function (handler) {
                         observable = handler(observable);
                     });
                 }
@@ -315,6 +313,11 @@ exports.Post = methodBuilder(http_1.RequestMethod.Post);
  * @param {string} url - resource url of the method
  */
 exports.Put = methodBuilder(http_1.RequestMethod.Put);
+/**
+ * Patch method
+ * @param {string} url - resource url of the method
+ */
+exports.Patch = methodBuilder(http_1.RequestMethod.Patch);
 /**
  * Delete method
  * @param {string} url - resource url of the method
