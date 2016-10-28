@@ -1,56 +1,38 @@
-var gulp = require('gulp'),
-  sourcemaps = require('gulp-sourcemaps'),
-  uglify = require('gulp-uglify'),
-  rename = require('gulp-rename'),
-  jasmine = require('gulp-jasmine'),
-  tsc = require('gulp-tsc'),
-  typescript = require('gulp-typescript'),
-  typedoc = require("gulp-typedoc");
+'use strict';
+var gulp = require('gulp');
+var tscConfig = require('./src/tsconfig.json');
+var mxtBuilder = require("@maxxton/gulp-builder");
 
-var objectMerge = require('object-merge');
-
-var tsProject = typescript.createProject('./tsconfig.json');
-var tsConfig = require('./tsconfig.json');
-var tsCompileDev = tsConfig.compilerOptions || {};
-var tsCompileProd = objectMerge(tsCompileDev, {
-  "removeComments": true,
-  "declaration": true,
-  "sourceMap": true
+mxtBuilder.setSettings({
+  distFolder: 'dist',
+  projectName: 'angular2-rest',
+  tsConfig: tscConfig
 });
 
-gulp.task('build.js.dev', function () {
-  gulp.src(['./*.ts'])
-    .pipe(typescript(tsCompileDev))
-    .pipe(gulp.dest('.'));
+gulp.task('default', ['prepublish'], function (cb) {
+  mxtBuilder.watch(cb);
 });
 
-gulp.task('build.js.prod', function () {
-  gulp.src(['./*.ts'])
-    .pipe(sourcemaps.init())
-    .pipe(typescript(tsCompileProd))
-    .pipe(uglify())
-    .pipe(rename({extname: ".min.js"}))
-    .pipe(sourcemaps.write())
-    .pipe(gulp.dest('dist'));
+// TEMPORARY SOLUTION FOR LINKING NPM MODULES TO DEVELOPMENT
+gulp.task('link', function (cb) {
+  mxtBuilder.link(cb);
 });
 
-gulp.task('test', function () {
-  return gulp.src('spec/test.js')
-    .pipe(jasmine());
+gulp.task('lint', function (cb) {
+  mxtBuilder.lint(cb);
 });
 
-gulp.task("typedoc", function () {
-  return gulp
-    .src(['./*.ts'])
-    .pipe(typedoc({
-      module: "commonjs",
-      target: "es6",
-      out: "docs/",
-      emitDecoratorMetadata: true,
-      experimentalDecorators: true,
-      name: "angular2-rest"
-    }))
-    ;
+gulp.task('bundle-javascript', function (cb) {
+  mxtBuilder.bundleJavascript(cb);
 });
 
-gulp.task('default', ['build.js.dev', 'typedoc']);
+gulp.task('test', function (cb) {
+  mxtBuilder.test(cb);
+});
+
+/**
+ * Cleans, moves, and compiles the code
+ */
+gulp.task('prepublish', function (cb) {
+  mxtBuilder.prepublish(cb);
+});
