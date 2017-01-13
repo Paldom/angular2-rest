@@ -135,7 +135,7 @@ function _compileChangedTypescript(event, src) {
 function _compileTypescriptFromSrc(srcArray, cb) {
   gutil.log("Starting", gutil.colors.cyan('_compileTypescriptFromSrc'), "for file(s)", gutil.colors.magenta(srcArray));
 
-  var compilerOptions = Object.assign({}, settings.tsConfig.compilerOptions);
+  var compilerOptions = settings.tsConfig.compilerOptions;
 
   //if we changed 1 file its not needed to compile the whole source code
   if (srcArray.length == 1 && srcArray[0].slice(-2) == "ts") {
