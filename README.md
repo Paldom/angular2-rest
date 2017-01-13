@@ -117,6 +117,8 @@ export class ToDoCmp {
 - `@Delete(url: String)`
 - `@Head(url: String)`
 - `@Headers(headers: Object)`
+- `@Map(mapper:(resp : any)=>any)`
+- `@OnEmit(emitter:(resp : Observable<any>)=>Observable<any>)`
 
 ### Parameter decorators:
 - `@Path(name: string, value?:any|{value?:any})`
