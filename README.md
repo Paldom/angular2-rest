@@ -1,4 +1,4 @@
-# angular2-rest
+# @maxxton/angular-rest
 Angular2 HTTP client to consume RESTful services. Built on @angular/http with TypeScript.  
 **Note:** Production Ready! (Well tested)
 
