@@ -2,11 +2,12 @@
   "name": "@maxxton/angular2-rest",
   "version": "1.0.0",
   "description": "Angular2 HTTP client to consume RESTful services.",
-  "typings": "./angular2-rest.d.ts",
-  "main": "angular2-rest.js",
+  "typings": "index.d.ts",
+  "main": "index.js",
   "scripts": {
     "test": "node_modules/.bin/gulp test",
-    "gulp": "node_modules/.bin/gulp"
+    "watch": "node_modules/.bin/gulp default",
+    "prepublish": "node_modules/.bin/gulp prepublish"
   },
   "repository": {
     "type": "git",
@@ -19,24 +20,31 @@
     "rest",
     "client"
   ],
-  "author": "Domonkos Pal <Paldom>",
+  "author": "Steven Hermans <s.hermans@maxxton.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Paldom/angular2-rest/issues"
+    "url": "https://github.com/MaxxtonGroup/angular2-rest/issues"
   },
-  "homepage": "https://github.com/Paldom/angular2-rest#readme",
+  "homepage": "https://github.com/MaxxtonGroup/angular2-rest#readme",
   "dependencies": {
-    "@angular/common": "2.0.0-rc.4",
-    "@angular/compiler": "2.0.0-rc.4",
-    "@angular/core": "2.0.0-rc.4",
-    "@angular/http": "2.0.0-rc.4",
-    "@angular/platform-browser": "2.0.0-rc.4",
-    "reflect-metadata": "0.1.3",
-    "rxjs": "5.0.0-beta.6",
-    "zone.js": "0.6.12"
+    "@angular/core": "2.3.1",
+    "@angular/http": "2.3.1",
+    "reflect-metadata": "^0.1.8",
+    "rxjs": "5.0.2",
+    "zone.js": "^0.7.2"
   },
   "devDependencies": {
     "gulp": "^3.9.0",
-    "@maxxton/gulp-builder": "1.3.16"
+    "gulp-util": "^3.0.7",
+    "gulp-html-extend": "^1.1.6",
+    "gulp-typescript": "3.1.3",
+    "gulp-replace": "^0.5.4",
+    "gulp-mocha": "^3.0.1",
+    "gulp-rimraf": "^0.2.0",
+    "async": "^2.0.1",
+    "merge2": "^1.0.2",
+    "gaze": "^1.1.2",
+    "chai": "^3.5.0",
+    "typings": "^2.0.0"
   }
 }
