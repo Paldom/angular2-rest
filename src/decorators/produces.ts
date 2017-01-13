@@ -1,4 +1,5 @@
 import { RestClient } from "../rest-client";
+import { Response } from "@angular/http";
 
 /**
  * Defines the media type(s) that the methods can produce
@@ -8,7 +9,7 @@ export function Produces(mime:MediaType) {
   return function(target: RestClient, propertyKey: string, descriptor: any) {
     if(mime != undefined) {
       if (mime === MediaType.JSON) {
-        descriptor.mime = res => res.json();
+        descriptor.mime = (res:Response) => res.json();
       }
     }
     return descriptor;

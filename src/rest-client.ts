@@ -1,5 +1,5 @@
 
-import { Request } from "@angular/http";
+import { Request, Response } from "@angular/http";
 import { Observable } from "rxjs/Observable";
 import { HttpClient } from "./abstract/http-client";
 /**
@@ -13,15 +13,15 @@ export class RestClient {
   public constructor( protected httpClient: HttpClient) {
   }
 
-  protected getServiceId(): string{
+  public getServiceId(): string{
     return null;
   }
 
-  protected getBaseUrl(): string {
+  public getBaseUrl(): string {
     return null;
   };
 
-  protected getDefaultHeaders(): Object {
+  public getDefaultHeaders(): Object {
     return null;
   };
 
@@ -31,7 +31,7 @@ export class RestClient {
    * @method requestInterceptor
    * @param {Request} req - request object
    */
-  protected requestInterceptor(req: Request) {
+  protected requestInterceptor(req: Request):void {
     //
   }
 
@@ -42,7 +42,7 @@ export class RestClient {
    * @param {Response} res - response object
    * @returns {Response} res - transformed response object
    */
-  protected responseInterceptor(res: Observable<any>): Observable<any> {
+  protected responseInterceptor(res: Observable<Response>): Observable<any> {
     return res;
   }
 

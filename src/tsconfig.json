@@ -10,9 +10,14 @@
     "removeComments": false,
     "noImplicitAny": true,
     "suppressImplicitAnyIndexErrors": true,
-    "isolatedModules": false
-  },
-  "exclude": [
-    "node_modules"
-  ]
+    "isolatedModules": false,
+    "typeRoots": [
+      "../node_modules/@types"
+    ]
+
+
+
+
+
+  }
 }

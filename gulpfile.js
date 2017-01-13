@@ -2,7 +2,7 @@
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 var htmlExtender = require('gulp-html-extend');
-var rimraf = require('gulp-rimraf');
+var del = require('del');
 var typescript = require('gulp-typescript');
 var async = require('async');
 var merge = require('merge2');
@@ -10,6 +10,7 @@ var replace = require('gulp-replace');
 var fs = require('fs');
 var Gaze = require('gaze').Gaze;
 var mocha = require('gulp-mocha');
+var vinylPaths = require('vinyl-paths');
 var tsConfig = require('./src/tsconfig.json');
 
 var settings = {
@@ -44,11 +45,11 @@ function prepublish(cb) {
       _prepublishPackage(next);
     }
   ], cb);
-};
+}
 
 function _clean(cb) {
-  gulp.src(settings.distFolder, { read: false })
-    .pipe(rimraf())
+  gulp.src(settings.distFolder + '/*', { read: false })
+    .pipe(vinylPaths(del))
     .on('finish', function () {
       cb();
     });
@@ -225,5 +226,8 @@ function _compileSpecs(cb) {
 function _runMocha(cb) {
   return gulp.src(['dist/**/*.spec.js'], { read: false })
     .pipe(mocha({ reporter: 'list' }))
-    .on('error', gutil.log);
+    .on('error', gutil.log)
+    .on('finish', function () {
+      cb();
+    });
 }

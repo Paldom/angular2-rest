@@ -9,6 +9,7 @@ import {
 import { RestClient } from "../rest-client";
 import { Observable } from "rxjs/Observable";
 import "rxjs/add/operator/map";
+import { Format } from "../decorators/parameters";
 
 export function methodBuilder( method: number) {
   return function(url: string) {
@@ -24,7 +25,14 @@ export function methodBuilder( method: number) {
         // Body
         var body:any = null;
         if (pBody) {
-          body = JSON.stringify(args[pBody[0].parameterIndex]);
+          if(pBody.length > 1){
+            throw new Error("Only one @Body is allowed");
+          }
+          var value = args[pBody[0].parameterIndex];
+          if(value === undefined && pBody[0].value !== undefined) {
+            value = pBody[0].value;
+          }
+          body = JSON.stringify(value);
         }
 
         // Path
@@ -32,7 +40,15 @@ export function methodBuilder( method: number) {
         if (pPath) {
           for (var k in pPath) {
             if (pPath.hasOwnProperty(k)) {
-              resUrl = resUrl.replace("{" + pPath[k].key + "}", args[pPath[k].parameterIndex]);
+              let value:any = args[pPath[k].parameterIndex];
+              if(value === undefined && pPath[k].value !== undefined) {
+                value = pPath[k].value;
+              }
+              if(value !== undefined && value !== null) {
+                resUrl = resUrl.replace( "{" + pPath[ k ].key + "}", value );
+              }else{
+                throw new Error("Missing path variable '" + pPath[k].key + "' in url '" + url + "'");
+              }
             }
           }
         }
@@ -48,15 +64,43 @@ export function methodBuilder( method: number) {
         var search = new URLSearchParams();
         if (pQuery) {
           pQuery
-            .filter((p:any) => args[p.parameterIndex]) // filter out optional parameters
+            .filter((p:any) => args[p.parameterIndex] !== undefined || p.value !== undefined) // filter out optional parameters
             .forEach((p:any) => {
               var key = p.key;
-              var value = args[p.parameterIndex];
+              let value:any = args[p.parameterIndex];
+              if(value === undefined && p.value !== undefined) {
+                value = p.value;
+              }
+
               // if the value is a instance of Object, we stringify it
-              if (value instanceof Object) {
+              if(Array.isArray(value)){
+                switch(p.format){
+                  case Format.CSV:
+                    value = value.join(',');
+                    break;
+                  case Format.SSV:
+                    value = value.join(' ');
+                    break;
+                  case Format.TSV:
+                    value = value.join('\t');
+                    break;
+                  case Format.PIPES:
+                    value = value.join('|');
+                    break;
+                  case Format.MULTI:
+                    value = value;
+                    break;
+                  default:
+                    value = value.join(',');
+                }
+              }else if (value instanceof Object) {
                 value = JSON.stringify(value);
               }
-              search.set(encodeURIComponent(key), encodeURIComponent(value));
+              if(Array.isArray(value)){
+                value.forEach(v => search.append(key, v));
+              }else {
+                search.set( key, value );
+              }
             });
         }
 
@@ -73,7 +117,36 @@ export function methodBuilder( method: number) {
         if (pHeader) {
           for (var k in pHeader) {
             if (pHeader.hasOwnProperty(k)) {
-              headers.append(pHeader[k].key, args[pHeader[k].parameterIndex]);
+              let value:any = args[pHeader[k].parameterIndex];
+              if(value === undefined && pHeader[k].value !== undefined) {
+                value = pHeader[k].value;
+              }
+              if(Array.isArray(value)){
+                switch(pHeader[k].format){
+                  case Format.CSV:
+                    value = value.join(',');
+                    break;
+                  case Format.SSV:
+                    value = value.join(' ');
+                    break;
+                  case Format.TSV:
+                    value = value.join('\t');
+                    break;
+                  case Format.PIPES:
+                    value = value.join('|');
+                    break;
+                  case Format.MULTI:
+                    value = value;
+                    break;
+                  default:
+                    value = value.join(',');
+                }
+              }
+              if(Array.isArray(value)){
+                value.forEach(v => headers.append(pHeader[k].key, v));
+              }else {
+                headers.append( pHeader[k].key, value );
+              }
             }
           }
         }
@@ -99,14 +172,14 @@ export function methodBuilder( method: number) {
           observable = observable.map(descriptor.mime);
         }
         if(descriptor.mappers){
-          descriptor.mappers.forEach(mapper => {
+          descriptor.mappers.forEach((mapper:(resp : any)=>any) => {
             observable = observable.map(mapper);
-          })
+          });
         }
         if(descriptor.emitters){
-          descriptor.emitters.forEach(handler => {
+          descriptor.emitters.forEach((handler:(resp : Observable<any>)=>Observable<any>) => {
             observable = handler(observable);
-          })
+          });
         }
 
         // intercept the response
