@@ -1,101 +1,140 @@
-# angular2-rest
-Angular2 HTTP client to consume RESTful services. Built on angular2/http with TypeScript.  
-**Note:** this solutions is not production ready, it's in a very basic alpha state. Any ideas or contributions are very welcomed :)
+# @maxxton/angular-rest
+Angular2 HTTP client to consume RESTful services. Built on @angular/http with TypeScript.  
+**Note:** Production Ready! (Well tested)
 
 ## Installation
 
 ```sh
-npm install angular2-rest
+echo @maxxton:registry=https://npm.maxxton.com > .npmrc
+npm install @maxxton/angular-rest --save
 ```
 
 ## Example
 
 ```ts
 
-import {Request, Response} from 'angular2/http';
-import {RESTClient, GET, PUT, POST, DELETE, BaseUrl, Headers, DefaultHeaders, Path, Body, Query} from 'angular2-rest';
+import {Http, Request, Response} from '@angular/http';
+import {HttpClient, RESTClient, Client, GET, PUT, POST, DELETE, Headers, Path, Body, Query, Produces, MediaType} from '@maxxton/angular-rest';
 
 import {Todo} from './models/Todo';
 import {SessionFactory} from './sessionFactory';
 
 @Injectable()
-@BaseUrl("http://localhost:3000/api/")
-@DefaultHeaders({
-    'Accept': 'application/json',
-    'Content-Type': 'application/json'
+@Client({
+    serviceId: 'todo-service',
+    baseUrl: 'http://localhost:3000/api/',
+    headers: {
+        'content-type': 'application/json'
+    }
 })
-export class TodoRESTClient extends RESTClient {
+export class TodoClient extends RestClient {
 
-    protected requestInterceptor(req: Request) {
+    constructor(http:Http){
+        super(<HttpClient>http);
+    }
+
+    protected requestInterceptor(req: Request):void {
         if (SessionFactory.getInstance().isAuthenticated) {
             req.headers.append('jwt', SessionFactory.getInstance().credentials.jwt);
         }
     }
     
-    protected requestInterceptor(req: Response) {
-        // do sg with responses
+    protected responseInterceptor(res: Observable<Response>): Observable<any> {
+        // do anything with responses
+        return res;
     }
 
-    @GET("todo/")
-    public getTodos( @Query("sort") sort?: string): Observable { return null; };
+    @Get("todo/")
+    @Produces(MediaType.JSON)
+    public getTodos( @Query("page") page:number, @Query("size", {default: 20}) size?:number, @Query("sort") sort?: string): Observable<Todo[]> { return null; };
 
-    @GET("todo/{id}")
-    public getTodoById( @Path("id") id: string): Observable { return null; };
+    @Get("todo/{id}")
+    @Map(resp => new Todo(resp.json()))
+    public getTodoById( @Path("id") id: number): Observable<Todo>{ return null; };
 
-    @POST("todo")
-    public postTodo( @Body todo: Todo): Observable { return null; };
+    @Post("todo")
+    @Headers({
+        'content-type': 'application/json'
+    })
+    public postTodo( @Body todo: Todo): Observable<Response> { return null; };
 
-    @PUT("todo/{id}")
-    public putTodoById( @Path("id") id: string, @Body todo: Todo): Observable { return null; };
+    @Put("todo/{id}")
+    public putTodoById( @Path("id") id: string, @Body todo: Todo): Observable<Response> { return null; };
 
-    @DELETE("todo/{id}")
-    public deleteTodoById( @Path("id") id: string): Observable { return null; };
+    @Delete("todo/{id}")
+    public deleteTodoById( @Path("id") id: string): Observable<Response> { return null; };
 
 }
 ```
 
 ### Using it in your component
 
-
+**```app.module.ts```**
+``` ts
+@NgModule({
+  declarations: [
+    AppComponent
+  ],
+  imports: [
+    HttpModule
+  ],
+  providers: [
+    TodoClient
+  ],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+```
+**```todo.component.ts```**
 ``` ts
 @Component({
   selector: 'to-do',
-  viewProviders: [TodoRESTClient],
-})
-@View({
-  templateUrl: 'components/to-do-template.html',
 })
 export class ToDoCmp {
 
-  constructor(todoRESTClient: TodoRESTClient) {
+  constructor(private todoClient: TodoClient) {
   }
   
-  //Use todoRESTClient   
+  //Use todoClient
 }
 ```
 ## API Docs
 
 ### RESTClient
 #### Methods:
-- `getBaseUrl(): string`: returns the base url of RESTClient
-- `getDefaultHeaders(): Object`: returns the default headers of RESTClient in a key-value pair
+- `getServiceId(): string`: returns the serviceId of the RestClient
+- `getBaseUrl(): string`: returns the base url of RestClient
+- `getDefaultHeaders(): Object`: returns the default headers of RestClient in a key-value pair
 
 ### Class decorators:
-- `@BaseUrl(url: string)`
-- `@DefaultHeaders(headers: Object)`
+- `@Client(args:{serviceId?: string, baseUrl?: string, headers?: any})`
 
 ### Method decorators:
-- `@GET(url: String)`
-- `@POST(url: String)`
-- `@PUT(url: String)`
-- `@DELETE(url: String)`
+- `@Get(url: String)`
+- `@Post(url: String)`
+- `@Put(url: String)`
+- `@Patch(url: String)`
+- `@Delete(url: String)`
+- `@Head(url: String)`
 - `@Headers(headers: Object)`
+- `@Map(mapper:(resp : any)=>any)`
+- `@OnEmit(emitter:(resp : Observable<any>)=>Observable<any>)`
 
 ### Parameter decorators:
-- `@Path(key: string)`
-- `@Query(key: string)`
-- `@Header(key: string)`
+- `@Path(name: string, value?:any|{value?:any})`
+- `@Query(name: string, value?:any|{value?:any,format?:string})`
+- `@Header(name: string, value?:any|{value?:any,format?:string})`
 - `@Body`
+
+#### Collection Format
+Determines the format of the array if type array is used. (used for ``@Query`` and ``@Header``) Possible values are:
+* ``Format.CSV`` - comma separated values ``foo,bar``.
+* ``Format.SSV`` - space separated values ``foo bar``.
+* ``Format.TSV`` - tab separated values ``foo\tbar``.
+* ``Format.PIPES`` - pipe separated values ``foo|bar``.
+* ``Format.MULTI`` - corresponds to multiple parameter instances instead of multiple values for a single instance ``foo=bar&foo=baz``. This is valid only for parameters in "query" or "formData".
+
+Default value is ``Format.CSV``.
 
 # License
 

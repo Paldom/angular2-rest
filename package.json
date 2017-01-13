@@ -1,16 +1,17 @@
 {
-  "name": "angular2-rest",
-  "version": "0.1.0",
+  "name": "@maxxton/angular-rest",
+  "version": "1.0.0",
   "description": "Angular2 HTTP client to consume RESTful services.",
-  "typings": "./angular2-rest.d.ts",
-  "main": "angular2-rest.js",
+  "typings": "index.d.ts",
+  "main": "index.js",
   "scripts": {
     "test": "node_modules/.bin/gulp test",
-    "gulp": "node_modules/.bin/gulp"
+    "watch": "node_modules/.bin/gulp default",
+    "prepublish": "node_modules/.bin/gulp prepublish"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Paldom/angular2-rest.git"
+    "url": "git+https://github.com/MaxxtonGroup/angular2-rest.git"
   },
   "keywords": [
     "angular2",
@@ -19,29 +20,35 @@
     "rest",
     "client"
   ],
-  "author": "Domonkos Pal <Paldom>",
+  "author": "Steven Hermans <s.hermans@maxxton.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Paldom/angular2-rest/issues"
+    "url": "https://github.com/MaxxtonGroup/angular2-rest/issues"
   },
-  "homepage": "https://github.com/Paldom/angular2-rest#readme",
+  "homepage": "https://github.com/MaxxtonGroup/angular2-rest#readme",
   "dependencies": {
-    "angular2": "^2.0.0-beta.7",
-    "es6-promise": "^3.0.2",
-    "es6-shim": "^0.33.13",
-    "reflect-metadata": "^0.1.2",
-    "rxjs": "^5.0.0-beta.0",
-    "zone.js": "^0.5.10"
+    "@angular/core": "2.3.1",
+    "@angular/http": "2.3.1",
+    "reflect-metadata": "^0.1.8",
+    "rxjs": "5.0.0-rc.4",
+    "zone.js": "^0.7.2"
   },
   "devDependencies": {
+    "@types/chai": "^3.4.34",
+    "@types/jasmine": "^2.5.40",
+    "@types/node": "^7.0.0",
+    "async": "^2.0.1",
+    "chai": "^3.5.0",
+    "del": "^2.2.2",
+    "gaze": "^1.1.2",
     "gulp": "^3.9.0",
-    "gulp-jasmine": "^2.2.1",
-    "gulp-rename": "^1.2.2",
-    "gulp-sourcemaps": "^1.6.0",
-    "gulp-tsc": "^1.1.4",
-    "gulp-typedoc": "^1.2.1",
-    "gulp-typescript": "^2.10.0",
-    "gulp-uglify": "^1.5.1",
-    "object-merge": "^2.5.1"
+    "gulp-html-extend": "^1.1.6",
+    "gulp-mocha": "^3.0.1",
+    "gulp-replace": "^0.5.4",
+    "gulp-typescript": "3.1.3",
+    "gulp-util": "^3.0.7",
+    "merge2": "^1.0.2",
+    "typings": "^2.0.0",
+    "vinyl-paths": "^2.1.0"
   }
 }
