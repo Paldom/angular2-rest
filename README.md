@@ -5,7 +5,7 @@ Angular2 HTTP client to consume RESTful services. Built on @angular/http with Ty
 ## Installation
 
 ```sh
-npm install @maxxton/angular-rest
+npm install @maxxton/angular-rest --save
 ```
 
 ## Example
