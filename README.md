@@ -43,10 +43,10 @@ export class TodoRESTClient extends RESTClient {
     public getTodoById( @Path("id") id: string): Observable { return null; };
 
     @POST("todo")
-    public postTodo( @Body todo: Todo): Observable { return null; };
+    public postTodo( @Body('') todo: Todo): Observable { return null; };
 
     @PUT("todo/{id}")
-    public putTodoById( @Path("id") id: string, @Body todo: Todo): Observable { return null; };
+    public putTodoById( @Path("id") id: string, @Body('') todo: Todo): Observable { return null; };
 
     @DELETE("todo/{id}")
     public deleteTodoById( @Path("id") id: string): Observable { return null; };
@@ -95,7 +95,7 @@ export class ToDoCmp {
 - `@Path(key: string)`
 - `@Query(key: string)`
 - `@Header(key: string)`
-- `@Body`
+- `@Body('')`
 
 # License
 
